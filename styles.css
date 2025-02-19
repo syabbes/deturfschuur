@@ -4,3 +4,20 @@
     color: white;
 
 }
+nav 
+{
+    background-color: #56351e;
+    color: white;
+}
+nav .logo
+{
+    color: white;
+}
+.custom-toggler.navbar-toggler
+{
+    border-color: #ece8ef;
+}
+.navbar-toggler-icon
+{
+    background-color: #ece8ef;
+}
