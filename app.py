@@ -28,3 +28,11 @@ def after_request(response):
 def index():
     # TODO
     return render_template("index.html")
+
+@app.route("/login")
+def login():
+    if request.method == "GET":
+        return render_template("login.html")
+    else:
+        # TODO
+        return render_template("index.html")

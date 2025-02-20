@@ -21,3 +21,26 @@ nav .logo
 {
     background-color: #ece8ef;
 }
+.navbar-toggler-icon
+{
+    z-index: 3;
+}
+.nav-img
+{
+    display: inline-block;
+    padding: 4px;
+}
+.nav-link
+{
+    color: #ece8ef !important;
+}
+.nav-link:hover
+{
+    color: white !important;
+}
+
+
+main
+{
+    background-color: #231e1e;
+}
