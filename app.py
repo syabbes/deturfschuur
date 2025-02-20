@@ -3,7 +3,7 @@ from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from datetime import timedelta
-import helpers
+from helpers import login_required
 
 # Configure application
 app = Flask(__name__)
@@ -25,7 +25,6 @@ def after_request(response):
     return response
 
 @app.route("/")
-@helpers.login_required
 def index():
     # TODO
     return render_template("index.html")
