@@ -1,3 +1,5 @@
-/env
-/__pycache__
-/flask_session.env
+env/
+__pycache__/
+flask_session/
+.env
+.DS_Store
