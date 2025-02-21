@@ -3,7 +3,6 @@
     margin: auto;
     background-color: blue;
     color: white;
-
 }
 nav 
 {
@@ -48,4 +47,10 @@ main
 .form
 {
     text-align: center;
+}
+.button
+{
+    background-color: #56351e !important;
+    border: 1px solid #ff9b54 !important;
+    color: #ece8ef !important;
 }
