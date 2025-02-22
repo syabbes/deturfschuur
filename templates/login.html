@@ -5,15 +5,18 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container-fluid justify-content-evenly pt-5 form">
+    <div class="container-fluid justify-content-evenly pt-5 pb-5 form">
         <form action="/login" method="post">
             <div class="mb-3">
-                <input autocomplete="on" autofocus class="form-control mx-auto w-auto" name="name" placeholder="Naam" type="text">
+                <input autocomplete="on" autofocus class="form-control mx-auto w-auto crimson-pro-regular" name="name" placeholder="Naam" type="text">
             </div>
             <div class="mb-3">
-                <input class="form-control mx-auto w-auto" name="password" placeholder="Wachtwoord" type="password">
+                <input class="form-control mx-auto w-auto crimson-pro-regular" name="password" placeholder="Wachtwoord" type="password">
             </div>
-            <button class="btn button" type="submit">Inloggen</button>
+            <button class="btn button crimson-pro-regular" type="submit">Inloggen</button>
         </form>
+        <div class="mt-3 container-fluid justify-content-center">
+            <a href="/registreren" class="crimson-pro-regular">Nog geen account? Klik hier om je aan te melden</a>
+        </div>
     </div>
 {% endblock %}
