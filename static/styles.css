@@ -44,6 +44,13 @@ main
 {
     background-color: #231e1e;
 }
+    .patroon
+    {
+        background-image: url(/static/patroon2-op-10.svg);
+        background-repeat: repeat;
+        background-size: 300px 187.86px;
+        background-position: 0 0;
+    }
 .form
 {
     text-align: center;
