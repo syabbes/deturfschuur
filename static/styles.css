@@ -64,6 +64,10 @@ a
     color: #ff9b54 !important;
     font-weight: 500 !important;
 }
+.light
+{
+    color: #ece8ef;
+}
 /* fonts */
 .rem-title 
 {

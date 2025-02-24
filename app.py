@@ -31,7 +31,7 @@ def index():
     return render_template("index.html")
 
 # login
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return render_template("login.html")
@@ -40,7 +40,7 @@ def login():
         return render_template("index.html")
     
 # register for an account
-@app.route("/registreren")
+@app.route("/registreren", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
         return render_template("registreren.html")
