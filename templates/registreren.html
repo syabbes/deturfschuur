@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Inloggen de Turfschuur
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid justify-content-evenly pt-5 pb-5 form">
+        <form action="/login" method="post">
+            <div class="mb-3">
+                <input autocomplete="on" autofocus class="form-control mx-auto w-auto crimson-pro-regular" name="name" placeholder="Naam" type="text">
+            </div>
+            <div class="mb-3">
+                <input autocomplete="on" class="form-control mx-auto w-auto crimson-pro-regular" name="email" placeholder="email" type="email">
+            </div>
+            <div class="mb-3">
+                <input class="form-control mx-auto w-auto crimson-pro-regular" name="password" placeholder="Wachtwoord" type="password">
+            </div>
+            <div class="mb-3">
+                <input class="form-control mx-auto w-auto crimson-pro-regular" name="password_repeat" placeholder="Herhaal wachtwoord" type="password">
+            </div>
+            <button class="btn button crimson-pro-regular" type="submit">Aanmelden</button>
+        </form>
+    </div>
+{% endblock %}

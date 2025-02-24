@@ -24,11 +24,13 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+# home
 @app.route("/")
 def index():
     # TODO
     return render_template("index.html")
 
+# login
 @app.route("/login")
 def login():
     if request.method == "GET":
@@ -36,3 +38,13 @@ def login():
     else:
         # TODO
         return render_template("index.html")
+    
+# register for an account
+@app.route("/registreren")
+def register():
+    if request.method == "GET":
+        return render_template("registreren.html")
+    else:
+        # TODO
+        # If user is registered, show a page with explaination that another member has to accept him/her
+        return render_template("succes.html")
