@@ -51,6 +51,7 @@ nav .logo
 main
 {
     background-color: #231e1e;
+    min-height: 100vh;
 }
 .patroon
 {
