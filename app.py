@@ -4,6 +4,7 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from datetime import timedelta
 from helpers import login_required
+import calendar
 
 # Configure application
 app = Flask(__name__)
@@ -48,3 +49,10 @@ def register():
         # TODO
         # If user is registered, show a page with explaination that another member has to accept him/her
         return render_template("succes.html")
+    
+# dashboard for members
+@app.route("/dashboard", methods=["GET", "POST"])
+@login_required
+def dashboard():
+    if request.method == "GET":
+        return render_template("dashboard.html")
