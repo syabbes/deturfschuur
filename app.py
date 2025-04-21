@@ -38,7 +38,7 @@ def login():
         return render_template("login.html")
     else:
         # TODO
-        return render_template("index.html")
+        return render_template("apology.html", apology="Dit is een work in progress")
     
 # register for an account
 @app.route("/registreren", methods=["GET", "POST"])
