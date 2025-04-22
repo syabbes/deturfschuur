@@ -25,6 +25,9 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+#configure database connection
+db = SQL("sqlite:///turfschuur.db")
+
 # home
 @app.route("/")
 def index():
@@ -38,7 +41,22 @@ def login():
         return render_template("login.html")
     else:
         # TODO
-        return render_template("apology.html", apology="Dit is een work in progress")
+        if not request.form.get("name"):
+            return render_template("apology.html", apology="Naam is niet ingevuld")
+        if not request.form.get("password"):
+            return render_template("apology.html", apology="Wachtwoord is niet ingevuld")
+        
+        # query database for name
+        rows = db.execute(
+            "SELECT * FROM bestuursleden WHERE naam = ?", request.form.get("name")
+        )
+
+        # check if name and password are correct and if he/she is an approved board member
+        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")) or rows[0]["toegelaten"] < 1:
+            return render_template("apology.html", apology="Inloggen mislukt")
+        
+        # if everything is correct, store id inside session
+        session["user_id"] = rows[0]["bestuurslid_id"]
     
 # register for an account
 @app.route("/registreren", methods=["GET", "POST"])
