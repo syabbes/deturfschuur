@@ -4,6 +4,7 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from datetime import timedelta
 from helpers import login_required
+from email_validator import validate_email, EmailNotValidError
 import calendar
 
 # Configure application
@@ -25,7 +26,8 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-#configure database connection
+# configure database connection
+# in this case, the database is named "turfschuur.db, dont forget to change it to the actual name"
 db = SQL("sqlite:///turfschuur.db")
 
 # home
@@ -65,6 +67,32 @@ def register():
         return render_template("registreren.html")
     else:
         # TODO
+        if not request.form.get("name"):
+            return render_template("apology.html", apology="Geen naam ingevuld")
+        if not request.form.get("email"):
+            return render_template("apology.html", apology="E-mailadres niet ingevuld")
+        # Check if the email is valid
+        try:
+            v = validate_email(request.form.get("email"))
+            # use normalized form of emailadress
+            email = v["email"]
+        except EmailNotValidError as e:
+            return render_template("apology.html", apology="E-mailadres wordt niet herkend")
+        # check if password and password-repeat are the same
+        if not request.form.get("password") == request.form.get("password_repeat"):
+            return render_template("apology.html", apology="Wachtwoorden komen niet overeen")
+        
+        # update database with new user
+        # "toegelaten" must be set to zero (also happens automatically if no value is specified), as you dont want anyone being able to register
+        try:
+            db.execute(
+                """INSERT INTO bestuursleden
+                (naam, email, hash, toegelaten)
+                VALUES (?, ?, ?)""",
+                request.form.get("name"), email, generate_password_hash(request.form.get("password")), 0
+            )
+        except:
+            return render_template("apology.html", apology="Naam of e-mailadres is al in gebruik")
         # If user is registered, show a page with explaination that another member has to accept him/her
         return render_template("succes.html")
     
