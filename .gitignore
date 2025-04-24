@@ -3,4 +3,4 @@ __pycache__/
 flask_session/
 .env
 .DS_Store
-.turfschuur.db
+*.db
