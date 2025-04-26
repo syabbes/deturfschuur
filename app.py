@@ -2,7 +2,8 @@ import os
 from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
-from datetime import timedelta
+from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import timedelta, datetime
 from helpers import login_required
 from email_validator import validate_email, EmailNotValidError
 import calendar
@@ -40,13 +41,16 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
+        # check if user is already logged in
+        if session["user_id"] is not None:
+            return redirect("/dashboard")
         return render_template("login.html")
     else:
         # TODO
         if not request.form.get("name"):
-            return render_template("apology.html", apology="Naam is niet ingevuld")
+            return render_template("apology.html", apology="Naam is niet ingevuld"), 400
         if not request.form.get("password"):
-            return render_template("apology.html", apology="Wachtwoord is niet ingevuld")
+            return render_template("apology.html", apology="Wachtwoord is niet ingevuld"), 400
         
         # query database for name
         rows = db.execute(
@@ -55,10 +59,11 @@ def login():
 
         # check if name and password are correct and if he/she is an approved board member
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")) or rows[0]["toegelaten"] < 1:
-            return render_template("apology.html", apology="Inloggen mislukt")
+            return render_template("apology.html", apology="Inloggen mislukt"), 400
         
         # if everything is correct, store id inside session
         session["user_id"] = rows[0]["bestuurslid_id"]
+        return redirect("/dashboard")
     
 # register for an account
 @app.route("/registreren", methods=["GET", "POST"])
@@ -88,8 +93,8 @@ def register():
             db.execute(
                 """INSERT INTO bestuursleden
                 (naam, email, hash, toegelaten)
-                VALUES (?, ?, ?)""",
-                request.form.get("name"), email, generate_password_hash(request.form.get("password")), 0
+                VALUES (?, ?, ?, ?)""",
+                request.form.get("name"), request.form.get("email"), generate_password_hash(request.form.get("password")), 0
             )
         except:
             return render_template("apology.html", apology="Naam of e-mailadres is al in gebruik")
@@ -101,4 +106,10 @@ def register():
 @login_required
 def dashboard():
     if request.method == "GET":
-        return render_template("dashboard.html")
+        # Get current month and year
+        current_month = datetime.now().month
+        current_year = datetime.now().year
+        cal = calendar.HTMLCalendar(firstweekday=0)
+        month_calendar = cal.formatmonth(current_year, current_month)
+
+        return render_template("dashboard.html", calendar=month_calendar)
