@@ -1,1 +1,9 @@
-{{ calendar|safe }}
+{% extends "layout_bestuur.html" %}
+
+{% block title %}
+    De Turfschuur | Dashboard
+{% endblock %}
+
+{% block main %}
+    {{ calendar|safe }}
+{% endblock %}

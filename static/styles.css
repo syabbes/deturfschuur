@@ -46,6 +46,15 @@ nav .logo
 {
     color: white !important;
 }
+.image-button
+{
+    width: 32px;
+    height: 32px;
+    background-image: url(/static/login.svg);
+    background-size: cover;
+    border: none;
+    cursor: pointer;
+}
 
 
 main

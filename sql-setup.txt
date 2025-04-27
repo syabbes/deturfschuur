@@ -1,0 +1,6 @@
+CREATE TABLE bestuursleden (
+bestuurslid_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+naam TEXT NOT NULL,
+email TEXT NOT NULL,
+hash TEXT NOT NULL, toegelaten INTEGER DEFAULT 0);
+CREATE TABLE sqlite_sequence(name,seq);
