@@ -1,6 +1,3 @@
-console.log("test");
-document.addEventListener("DOMContentLoaded", load_calendar);
-
 function logout()
 {
     // do nothing yet
@@ -18,6 +15,7 @@ function generate_calendar(year, month)
     firstDay.setDate(firstDay.getDate() - x);
     console.log(firstDay);
 }
+
 function load_calendar()
 {
     if (document.getElementById("calendar-container"))
@@ -33,3 +31,6 @@ function load_calendar()
         console.log(month + "-" + year);
     }
 }
+
+console.log("test");
+document.addEventListener("DOMContentLoaded", load_calendar);
