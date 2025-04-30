@@ -119,11 +119,21 @@ input:focus
     box-shadow: 0 0 0 .25rem #08415c !important;
 }
 /* calendar table */
+#calendar-container
+{
+    width: 62.5%;
+    background-color: #231e1e;
+}
 .table
 {
-    width: 70%;
+    width: 80%;
     margin: auto;
     table-layout: fixed;
+    background-color: #231e1e;
+    overflow: hidden;
+    border-radius: 15px;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 .table th
 {
@@ -131,5 +141,13 @@ input:focus
 }
 .table td
 {
+    border-top: 1px #ff9b54 !important;
+}
+.table td
+{
     height: 50px;
+}
+#calendar-month
+{
+    font-size: 161.8%;
 }

@@ -6,6 +6,8 @@ function logout()
 
 function generate_calendar(year, month)
 {
+    // array of months
+    let months = ["Januari", "Februari", "Maart", "April", "Juni", "Juli", "Augustus", "Sebtember", "Oktober", "November", "December"];
     // first day of the month
     let firstMonthDay = new Date(year, month, 1).getDay();
     // get the monday before the month
@@ -17,11 +19,10 @@ function generate_calendar(year, month)
     }
     else
     {
-        x = firstMonthDay - (firstMonthDay - 1);
+        x = firstMonthDay - 1;
     }
     let firstDay = new Date(year, month, 1);
     firstDay.setDate(firstDay.getDate() - x);
-    console.log(firstDay);
 
     // calculate the next 42 days and add them in array
     // first day = firstDay
@@ -35,20 +36,19 @@ function generate_calendar(year, month)
         // add the day to the array
         calendar_dates.push(newDate);
     }
-    console.log("length = " + calendar_dates.length);
-    console.log(calendar_dates[0] + '-' + calendar_dates[41]);
     
+    // add month and year to calendar title
+    calendar_month = document.getElementById("calendar-month");
+    calendar_month.innerText = months[month] + " " + year;
     // loop over every table cell
     let calendar_table = document.getElementById("calendar-body");
     // itterator for the array
     let itterator = 0;
-    console.log(calendar_table.rows.length);
     for (let i = 0; i < calendar_table.rows.length; i++)
     {
         let row = calendar_table.rows[i];
         for (let j = 0; j < row.cells.length; j++)
         {
-            console.log(row.cells.length);
             // inner text of cell = the day of the month
             row.cells[j].innerText = calendar_dates[itterator].getDate();
             // add the date as attribute
@@ -76,17 +76,13 @@ function load_calendar()
 {
     if (document.getElementById("calendar-container"))
     {
-        console.log("loading calendar...")
         // get current month and year
         let date = new Date();
         let month = date.getMonth();
         let year = date.getFullYear();
         // call other function to generate the calendar
         generate_calendar(year, month);
-
-        console.log(month + "-" + year);
     }
 }
 
-console.log("test");
 document.addEventListener("DOMContentLoaded", load_calendar);
