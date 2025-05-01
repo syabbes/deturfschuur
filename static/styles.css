@@ -78,6 +78,10 @@ a
 {
     color: #ece8ef;
 }
+.dark
+{
+    color: #231e1e;
+}
 /* fonts */
 .rem-title 
 {
@@ -124,30 +128,72 @@ input:focus
     width: 62.5%;
     background-color: #231e1e;
 }
-.table
+.calendar
 {
     width: 80%;
     margin: auto;
     table-layout: fixed;
     background-color: #231e1e;
     overflow: hidden;
-    border-radius: 15px;
+    border-radius: 0 0 15px 15px;
     border-collapse: separate;
     border-spacing: 0;
 }
-.table th
+.calendar th
 {
     text-align: center;
+    background-color: #ece8ef;
+    color: #231e1e;
+    border-bottom: solid;
+    border-bottom-width: 0.5px;
+    border-color: #ff9b54;
 }
-.table td
+.calendar td
 {
-    border-top: 1px #ff9b54 !important;
-}
-.table td
-{
+    border: solid;
+    border-width: 0.5px;
+    border-color: #ff9b54;
     height: 50px;
+    background-color: #ece8ef;
+    color: #231e1e;
+    text-align: center;
 }
 #calendar-month
 {
     font-size: 161.8%;
+}
+.calendar-header
+{
+    width: 80%;
+    margin: auto;
+    background-color: #ece8ef;
+    border-radius: 15px 15px 0 0;
+}
+.calendar-button
+{
+    background-color: #56351e !important;
+    border: 1px solid #ff9b54 !important;
+    color: #ece8ef !important;
+}
+/* for smaller devices different margin */
+@media screen and (max-width: 767px) {
+    .calendar-header
+    {
+        width: 100%;
+        margin: auto;
+    }
+    .calendar
+    {
+        width: 100%;
+        margin: auto;
+    }
+    .calendar-container
+    {
+        width: 90%;
+        margin: 0;
+    }
+    #calendar-container
+    {
+        width: 90%;
+    }
 }

@@ -6,14 +6,14 @@
 
 {% block main %}
     <div class="container-fluid pt-5 pb-5 justify-content-center justify-content-evenly" id="calendar-container">
-        <header class="justify-content-center text-center d-flex flex-row pb-3">
-            <p id="calendar-month" class="rem-title light my-auto mx-3"></p>
-            <div class="mx-3">
-                <button class="btn button">&lsaquo;</button>
-                <button class="btn button">&rsaquo;</button>
-            </div>
-        </header>
-        <table class="table">
+            <header class="calendar-header justify-content-between text-center d-flex flex-row pb-3 pt-3 align-middle">
+                <p id="calendar-month" class="rem-title dark my-auto mx-3"></p>
+                <div class="mx-3">
+                    <button class="btn calendar-button" onclick="previous_month()">&lsaquo;</button>
+                    <button class="btn calendar-button" onclick="next_month()">&rsaquo;</button>
+                </div>
+            </header>
+        <table class="calendar">
             <thead>
                 <tr>
                     <th scope="col">Ma</th>

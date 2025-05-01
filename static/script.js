@@ -7,7 +7,7 @@ function logout()
 function generate_calendar(year, month)
 {
     // array of months
-    let months = ["Januari", "Februari", "Maart", "April", "Juni", "Juli", "Augustus", "Sebtember", "Oktober", "November", "December"];
+    let months = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "Sebtember", "Oktober", "November", "December"];
     // first day of the month
     let firstMonthDay = new Date(year, month, 1).getDay();
     // get the monday before the month
@@ -38,8 +38,13 @@ function generate_calendar(year, month)
     }
     
     // add month and year to calendar title
+    let month_title = new Date(year, month);
+
     calendar_month = document.getElementById("calendar-month");
-    calendar_month.innerText = months[month] + " " + year;
+    calendar_month.innerText = months[month_title.getMonth()] + " " + month_title.getFullYear();
+    // add month and year as attribute
+    calendar_month.setAttribute("data-month", month_title.getMonth());
+    calendar_month.setAttribute("data-year", month_title.getFullYear());
     // loop over every table cell
     let calendar_table = document.getElementById("calendar-body");
     // itterator for the array
@@ -83,6 +88,18 @@ function load_calendar()
         // call other function to generate the calendar
         generate_calendar(year, month);
     }
+}
+
+function next_month()
+{
+    let current_month = document.getElementById("calendar-month");
+    generate_calendar(Number(current_month.getAttribute("data-year")), Number(current_month.getAttribute("data-month")) + 1);
+}
+
+function previous_month()
+{
+    let current_month = document.getElementById("calendar-month");
+    generate_calendar(Number(current_month.getAttribute("data-year")), Number(current_month.getAttribute("data-month")) - 1);
 }
 
 document.addEventListener("DOMContentLoaded", load_calendar);
