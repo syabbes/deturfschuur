@@ -158,6 +158,11 @@ input:focus
     color: #231e1e;
     text-align: center;
 }
+.calendar td:hover
+{
+    background-color: #5a8092 !important;
+    cursor: pointer !important;
+}
 #calendar-month
 {
     font-size: 161.8%;
@@ -196,4 +201,14 @@ input:focus
     {
         width: 90%;
     }
+}
+.today
+{
+    background-color: #ff9b54 !important;
+    color: #231e1e !important;
+}
+.deactivated
+{
+    background-color: #c5c1c7 !important;
+    color: #231e1e !important;
 }

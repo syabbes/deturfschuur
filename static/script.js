@@ -39,6 +39,7 @@ function generate_calendar(year, month)
     
     // add month and year to calendar title
     let month_title = new Date(year, month);
+    console.log(month_title);
 
     calendar_month = document.getElementById("calendar-month");
     calendar_month.innerText = months[month_title.getMonth()] + " " + month_title.getFullYear();
@@ -54,6 +55,9 @@ function generate_calendar(year, month)
         let row = calendar_table.rows[i];
         for (let j = 0; j < row.cells.length; j++)
         {
+            // remove classes from previous month if needed
+            row.cells[j].classList.remove("deactivated");
+            row.cells[j].classList.remove("today");
             // inner text of cell = the day of the month
             row.cells[j].innerText = calendar_dates[itterator].getDate();
             // add the date as attribute
@@ -67,7 +71,7 @@ function generate_calendar(year, month)
                 row.cells[j].classList.add("today");
             }
             // check if date is in targeted month
-            else if (calendar_dates[itterator].getMonth() !== month)
+            else if (calendar_dates[itterator].getMonth() !== month_title.getMonth())
             {
                 row.cells[j].classList.add("deactivated");
             }
