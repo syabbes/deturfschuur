@@ -212,3 +212,24 @@ input:focus
     background-color: #c5c1c7 !important;
     color: #231e1e !important;
 }
+
+/* appointments popup window */
+.appointment-window
+{
+    position: fixed;
+    display: inline-block;
+    width: 80%;
+    height: 500px;
+    z-index: 9999;
+}
+.appointment-container
+{
+    position: absolute;
+    width: 80%;
+    height: 500px;
+    overflow: scroll;
+    visibility: visible;
+    background-color: #56351e;
+    left: 50%;
+    z-index: 10000;
+}
