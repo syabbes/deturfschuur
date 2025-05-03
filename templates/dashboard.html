@@ -5,6 +5,25 @@
 {% endblock %}
 
 {% block main %}
+    <!-- popup window -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="appointments"></div>
+            <header>
+                <p>Nieuwe afspraak</p>
+            </header>
+            <div class="form justify-content-evenly">
+                <form>
+                    <div>
+                        <input placeholder="Titel" type="text">
+                        <input placeholder="Dag" type="date">
+                        <input placeholder="Tijd" type="time">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--calendar-->
     <div class="container-fluid pt-5 pb-5 justify-content-center justify-content-evenly" id="calendar-container">
             <header class="calendar-header justify-content-between text-center d-flex flex-row pb-3 pt-3 align-middle">
                 <p id="calendar-month" class="rem-title dark my-auto mx-3"></p>
@@ -82,23 +101,5 @@
                 </tr>
             </tbody>
         </table>
-    </div>
-    <!-- popup window -->
-    <div class="appointment-window">
-        <div class="appointment-container">
-            <div class="appointments"></div>
-            <header>
-                <p>Nieuwe afspraak</p>
-            </header>
-            <div class="form justify-content-evenly">
-                <form>
-                    <div>
-                        <input placeholder="Titel" type="text">
-                        <input placeholder="Dag" type="date">
-                        <input placeholder="Tijd" type="time">
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 {% endblock %}

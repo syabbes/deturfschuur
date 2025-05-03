@@ -107,3 +107,10 @@ function previous_month()
 }
 
 document.addEventListener("DOMContentLoaded", load_calendar);
+
+// eventlistener for the calendar
+modal = document.getElementById("modal");
+calendar = document.getElementById("calendar-body");
+calendar.addEventListener("click", function(){
+    modal.style.display = "block";
+})

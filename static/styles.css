@@ -16,6 +16,7 @@ nav
 {
     background-color: #56351e;
     color: white;
+    z-index: 2;
 }
 nav .logo
 {
@@ -214,22 +215,23 @@ input:focus
 }
 
 /* appointments popup window */
-.appointment-window
+.modal
 {
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(33.73, 20.78, 11.76, 0.5);
+    display: none;
     position: fixed;
-    display: inline-block;
-    width: 80%;
-    height: 500px;
-    z-index: 9999;
 }
-.appointment-container
+.modal-content
 {
-    position: absolute;
-    width: 80%;
-    height: 500px;
-    overflow: scroll;
-    visibility: visible;
+    width: 70%;
+    margin: 15% auto;
+    padding: 20px;
     background-color: #56351e;
-    left: 50%;
-    z-index: 10000;
+    text-align: center;
 }
