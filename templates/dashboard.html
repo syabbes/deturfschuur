@@ -8,16 +8,76 @@
     <!-- popup window -->
     <div class="modal" id="modal">
         <div class="modal-content">
+            <div class="d-flex justify-content-end">
+                <button class="btn close-button" id="close-modal">&times;</button>
+            </div>
             <div class="appointments"></div>
             <header>
-                <p>Nieuwe afspraak</p>
+                <h2 class="rem-title light mb-4">Nieuwe afspraak</h2>
             </header>
             <div class="form justify-content-evenly">
-                <form>
-                    <div>
-                        <input placeholder="Titel" type="text">
-                        <input placeholder="Dag" type="date">
-                        <input placeholder="Tijd" type="time">
+                <form class="d-flex flex-column align-items-center gap-4">
+                    <!--row 1-->
+                    <div class="d-flex gap-3 flex-wrap justify-content-evenly w-75">
+                        <div class="d-flex flex-column align-items-center">
+                            <p class="rem-title light mb-1">Titel</p>
+                            <input placeholder="Titel" type="text">
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <p class="rem-title light mb-1">Dag</p>
+                            <input placeholder="Dag" type="date">
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <p class="rem-title light mb-1">Begintijd</p>
+                            <input placeholder="Beginijd" type="time">
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <p class="rem-title light mb-1">Eindtijd</p>
+                            <input placeholder="Eindtijd" type="time">
+                        </div>
+                    </div>
+                    <!--row 2-->
+                    <hr class="calendar-division my-1">
+                    <div class="d-flex flex-wrap gap-3 justify-content-evenly w-75">
+                        <div class="d-flex flex-column align-items-center ml-4">
+                            <p class="rem-title light mb-1">Prijs</p>
+                            <input placeholder="Prijs" type="number" step="0.01">
+                        </div>
+                        <div>
+                            <p class="rem-title light mb-1">Herhaling</p>
+                            <label for="herhaling" class="light crimson-pro-regular">Wordt herhaald om zoveel weken: </label>
+                            <input value="0" name="herhaling" min="0" max="52" type="number">
+                            <label for="eind_herhaling" class="light crimson-pro-regular">Herhaling eindigt na een: </label>
+                            <select name="eind_herhaling">
+                                <option value="maand">Maand</option>
+                                <option value="halfjaar">Half jaar</option>
+                                <option value="jaar">Jaar</option>
+                            </select>
+                        </div>
+                    </div>
+                    <hr class="calendar-division my-1">
+                    <!--row 3-->
+                    <div class="d-flex gap-3 flex-wrap justify-content-evenly w-75">
+                        <div class="d-flex flex-column align-items-center">
+                            <p class="rem-title light mb-1">Adres</p>
+                            <input type="text" placeholder="Adres" name="adres">
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <p class="rem-title light mb-1">Contactgegevens</p>
+                            <input type="text" placeholder="E-mail of telefoonnummer" name="contactgegevens">
+                        </div>
+                    </div>
+                    <hr class="calendar-division my-1">
+                    <!--row 4-->
+                    <div class="d-flex gap-3 flex-wrap justify-content-evenly w-75">
+                        <div class="d-flex flex-column align-items-center">
+                            <p class="rem-title light mb-1">Overige informatie</p>
+                            <input type="text" placeholder="Overige informatie" name="info">
+                        </div>
+                    </div>
+                    <!--row 5 (submit button)-->
+                    <div class="d-flex flex-column align-items-center">
+                        <button class="button btn crimson-pro-regular btn-lg" type="submit">Opslaan</button>
                     </div>
                 </form>
             </div>

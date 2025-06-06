@@ -42,7 +42,7 @@ def index():
 def login():
     if request.method == "GET":
         # check if user is already logged in
-        if session["user_id"] is not None:
+        if session.get("user_id") is not None:
             return redirect("/dashboard")
         return render_template("login.html")
     else:

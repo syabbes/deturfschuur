@@ -114,3 +114,8 @@ calendar = document.getElementById("calendar-body");
 calendar.addEventListener("click", function(){
     modal.style.display = "block";
 })
+
+// eventlistener for close button of modal
+document.getElementById("close-modal").addEventListener("click", function(){
+    modal.style.display = "none";
+})

@@ -109,6 +109,12 @@ a
     border: 1px solid #ff9b54 !important;
     color: #ece8ef !important;
 }
+.close-button
+{
+    background-color: rgb(205, 1, 1) !important;
+    border: 1px solid #ff9b54 !important;
+    color: #ece8ef !important;
+}
 input
 {
     background-color: #56351e !important;
@@ -234,4 +240,11 @@ input:focus
     padding: 20px;
     background-color: #56351e;
     text-align: center;
+}
+.calendar-division
+{
+    height: 2px;
+    border-width: 0;
+    background-color: #ece8ef;
+    width: 80%;
 }
