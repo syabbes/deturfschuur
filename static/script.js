@@ -109,13 +109,33 @@ function previous_month()
 document.addEventListener("DOMContentLoaded", load_calendar);
 
 // eventlistener for the calendar
-modal = document.getElementById("modal");
-calendar = document.getElementById("calendar-body");
-calendar.addEventListener("click", function(){
+var modal = document.getElementById("modal");
+var calendar = document.getElementById("calendar-body");
+calendar.addEventListener("click", function(event){
     modal.style.display = "block";
+    clicked_day = event.target;
+    setbegintime();
+    setendtime();
 })
 
 // eventlistener for close button of modal
 document.getElementById("close-modal").addEventListener("click", function(){
     modal.style.display = "none";
-})
+});
+
+// eventlistener for when the datetime inputs are loaded
+function setbegintime()
+{
+    let datetime_begin = document.getElementById("begin")
+    let begindate = new Date(clicked_day.getAttribute("data-date"));
+    begindate.setMinutes(begindate.getMinutes() - begindate.getTimezoneOffset());
+    datetime_begin.value = begindate.toISOString().slice(0,16);
+}
+function setendtime()
+{
+    let datetime_einde = document.getElementById("einde")
+    let enddate = new Date(clicked_day.getAttribute("data-date"));
+    enddate.setHours(enddate.getHours() + 1);
+    enddate.setMinutes(enddate.getMinutes() - enddate.getTimezoneOffset());
+    datetime_einde.value = enddate.toISOString().slice(0,16);
+}

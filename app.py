@@ -28,8 +28,9 @@ def after_request(response):
     return response
 
 # configure database connection
-# in this case, the database is named "turfschuur.db, dont forget to change it to the actual name"
 db = SQL("sqlite:///turfschuur.db")
+db.execute("PRAGMA foreign_keys = ON")
+
 
 # home
 @app.route("/")
