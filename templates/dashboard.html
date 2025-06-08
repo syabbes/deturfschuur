@@ -16,20 +16,20 @@
                 <h2 class="rem-title light mb-4">Nieuwe afspraak</h2>
             </header>
             <div class="form justify-content-evenly">
-                <form class="d-flex flex-column align-items-center gap-4">
+                <form class="d-flex flex-column align-items-center gap-4" method="post">
                     <!--row 1-->
                     <div class="d-flex gap-3 flex-wrap justify-content-evenly w-75">
                         <div class="d-flex flex-column align-items-center">
                             <p class="rem-title light mb-1">Titel</p>
-                            <input placeholder="Titel" type="text" name="titel">
+                            <input placeholder="Titel" type="text" name="titel" required>
                         </div>
                         <div class="d-flex flex-column align-items-center">
                             <p class="rem-title light mb-1">Begin</p>
-                            <input placeholder="Beginijd" type="datetime-local" name="begin" id="begin" onload="setbegintime()">
+                            <input placeholder="Beginijd" type="datetime-local" name="begin" id="begin" required>
                         </div>
                         <div class="d-flex flex-column align-items-center">
                             <p class="rem-title light mb-1">Einde</p>
-                            <input placeholder="Eindtijd" type="datetime-local" name="einde" id="einde" onload="setendtime()">
+                            <input placeholder="Eindtijd" type="datetime-local" name="einde" id="einde" required>
                         </div>
                     </div>
                     <!--row 2-->
@@ -37,7 +37,7 @@
                     <div class="d-flex flex-wrap gap-3 justify-content-evenly w-75">
                         <div class="d-flex flex-column align-items-center ml-4">
                             <p class="rem-title light mb-1">Prijs</p>
-                            <input placeholder="Prijs" type="number" step="0.01">
+                            <input placeholder="Prijs" type="number" step="0.01" value="0.00">
                         </div>
                         <div>
                             <p class="rem-title light mb-1">Herhaling</p>

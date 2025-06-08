@@ -107,10 +107,76 @@ def register():
 @login_required
 def dashboard():
     if request.method == "GET":
-        # Get current month and year
-        current_month = datetime.now().month
-        current_year = datetime.now().year
-        cal = calendar.HTMLCalendar(firstweekday=0)
-        month_calendar = cal.formatmonth(current_year, current_month)
+        return render_template("dashboard.html")
+    # post for posting appointments
+    else:
+        if not request.form.get("titel") or not request.form.get("begin") or not request.form.get("einde"):
+            return render_template("apology.html", apology="Minstens een titel, begin- en eindtijd instellen")
+        # check if end time is later than begin time
+        begintijd = datetime.strptime(request.form.get("begin"), "%Y-%m-%dT%H:%M")
+        eindtijd = datetime.strptime(request.form.get("einde"), "%Y-%m-%dT%H:%M")
+        if eindtijd <= begintijd:
+            return render_template("apology.html", apology="Eindtijd moet later dan begintijd zijn")
+        
+        titel = request.form.get("titel").strip()
+        prijs = float(request.form.get("prijs"))
+        contact = request.form.get("contactgegevens").strip()
+        info = request.form.get("info").strip()
+        
+        naam = request.form.get("naam").lower().strip()
+        straat = request.form.get("straat").lower().strip()
+        hn = request.form.get("huisnummer").lower().split()
+        huisnummer = "".join(hn)
+        post = request.form.get("postcode").lower().split()
+        postcode = "".join(post)
+        plaats = request.form.get("woonplaats").lower().strip()
+        land = request.form.get("land").lower().strip()
 
-        return render_template("dashboard.html", calendar=month_calendar)
+        print(postcode + huisnummer)
+
+        # If address is filled in, check if the address/person is yet in the database
+        if naam and postcode and huisnummer:
+            # Querie database for right address id
+            adres_id = db.execute("""SELECT adres_id
+                            FROM adressenbestand
+                            WHERE naam = ? AND postcode = ? AND huisnummer = ?""",
+                             naam, postcode, huisnummer)
+            # If it is, adres_id is set to the address/person
+            if len(adres_id) > 0:
+                try:
+                    add_app(titel, begintijd, eindtijd, prijs, info, adres_id[0])
+                except:
+                    return render_template("apology.html", apology="Kon afspraak niet toevoegen")
+            # If not, add new address/person to address table (fields cant be null)
+            else:
+                try:
+                    id = db.execute("""INSERT INTO adressenbestand
+                                    (naam, straat, huisnummer, woonplaats, land, postcode, contact)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?)""", 
+                                    naam, straat, huisnummer, plaats, land, postcode, request.form.get("contactgegevens"))
+                except ValueError:
+                    return render_template("apology.html", apology="Niet alle benodigde gegevens zijn ingevuld")
+                except:
+                    return render_template("apology.html", apology="Er is iets misgegaan")
+                try:
+                    add_app(titel, begintijd, eindtijd, prijs, info, id)
+                except:
+                    return render_template("apology.html", apology="Kon afspraak niet toevoegen")
+                
+        # Else if address isnt filled in, just add appointment to database with the adres_id set to null
+        else:
+            try:
+                add_app(titel, begintijd, eindtijd, prijs, info, None)
+            except:
+                    return render_template("apology.html", apology="Kon afspraak niet toevoegen")
+        return redirect("/dashboard")
+    
+# functions
+def add_app(titel, begin, eind, prijs, info, adres_id):
+    try:
+        db.execute("""INSERT INTO afspraken
+                    (titel, begin, eind, prijs, info, adres_id)
+                    VALUES (?, ?, ?, ?, ?, ?)""", 
+                    titel, begin, eind, prijs, info, adres_id)
+    except Exception as e:
+        raise RuntimeError("Kon afspraak niet toevoegen") from e

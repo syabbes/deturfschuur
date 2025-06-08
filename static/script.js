@@ -123,7 +123,7 @@ document.getElementById("close-modal").addEventListener("click", function(){
     modal.style.display = "none";
 });
 
-// eventlistener for when the datetime inputs are loaded
+// functions for setting a default time for the appointment
 function setbegintime()
 {
     let datetime_begin = document.getElementById("begin")
