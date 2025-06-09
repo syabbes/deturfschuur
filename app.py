@@ -1,13 +1,10 @@
-import os
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import timedelta, datetime
-from helpers import login_required
+from helpers import login_required, add_app
 from email_validator import validate_email, EmailNotValidError
-import calendar
-import uuid
 
 # Configure application
 app = Flask(__name__)
@@ -164,8 +161,6 @@ def dashboard():
                                     WHERE voorletter = ? AND achternaam = ? AND postcode = ? AND huisnummer = ?""",
                                     vl, an, postcode, huisnummer)
             # If not, add new address/person to address table (fields cant be null)
-            print(type(adres_id))
-            print(len(adres_id))
             if len(adres_id) <= 0:
                 try:
                     id = db.execute("""INSERT INTO adressenbestand
@@ -194,30 +189,3 @@ def dashboard():
                     return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
         return redirect("/dashboard")
     
-# functions
-def add_app(titel, begin, eind, prijs, info, adres_id, interval, reeks):
-    begindates = [begin]
-    enddates = [eind]
-    if int(reeks) > 0:
-        # Yield error if repeat-values are incorrect
-        if int(reeks) > 52 or int(interval) < 1 or int(interval) > 52:
-            raise ValueError("Ongeldige herhaling ingesteld")
-        
-        #generate unique reeks_id
-        id = uuid.uuid1().int * 4
-        # Calculate next dates
-        for i in range(int(reeks)):
-            begindates.append(begindates[i] + timedelta(weeks=int(interval)))
-            enddates.append(enddates[i] + timedelta(weeks=int(interval)))
-        
-        for b, e in zip(begindates, enddates):
-            db.execute("""INSERT INTO afspraken
-                        (titel, begin, eind, prijs, info, adres_id, reeks_id)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)""", 
-                        titel,b, e, prijs, info, adres_id, id)
-    # If no repetition, just add one appointment with reeks_id set to NULL 
-    else:
-        db.execute("""INSERT INTO afspraken
-                    (titel, begin, eind, prijs, info, adres_id)
-                    VALUES (?, ?, ?, ?, ?, ?)""", 
-                    titel,begin, eind, prijs, info, adres_id)
