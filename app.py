@@ -126,7 +126,9 @@ def dashboard():
         contact = request.form.get("contactgegevens").strip()
         info = request.form.get("info").strip()
         
-        naam = request.form.get("naam").lower().strip()
+        vl = request.form.get("voorletter").upper().strip()
+        an = request.form.get("achternaam").lower().strip()
+        
         straat = request.form.get("straat").lower().strip()
         if not straat:
             straat = None
@@ -149,21 +151,27 @@ def dashboard():
         repeatx = request.form.get("reeks")
 
         # If address is filled in, check if the address/person is yet in the database
-        if naam and postcode and huisnummer:
+        if (an or vl) and postcode and huisnummer:
+            # Check if initial or surname is empty
+            if not an or not vl:
+                return render_template("apology.html", apology="Moet zowel een voorletter als een achternaam zijn opgegeven om in het adressenbestand te zoeken")
+            # Check if initial is 1 letter and 1 dot
+            if len(vl) > 2 or vl[-1] != ".":
+                return render_template("apology.html", apology="Voorletter heeft een letter en een punt")
             # Querie database for right address id
             adres_id = db.execute("""SELECT adres_id
-                            FROM adressenbestand
-                            WHERE naam = ? AND postcode = ? AND huisnummer = ?""",
-                             naam, postcode, huisnummer)
+                                    FROM adressenbestand
+                                    WHERE voorletter = ? AND achternaam = ? AND postcode = ? AND huisnummer = ?""",
+                                    vl, an, postcode, huisnummer)
             # If not, add new address/person to address table (fields cant be null)
             print(type(adres_id))
             print(len(adres_id))
             if len(adres_id) <= 0:
                 try:
                     id = db.execute("""INSERT INTO adressenbestand
-                                    (naam, straat, huisnummer, woonplaats, land, postcode, contact)
-                                    VALUES (?, ?, ?, ?, ?, ?, ?)""", 
-                                    naam, straat, huisnummer, plaats, land, postcode, request.form.get("contactgegevens"))
+                                    (voorletter, achternaam, straat, huisnummer, woonplaats, land, postcode, contact)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", 
+                                    vl, an, straat, huisnummer, plaats, land, postcode, request.form.get("contactgegevens"))
                 except ValueError:
                     return render_template("apology.html", apology="Niet alle benodigde gegevens zijn ingevuld")
                 
