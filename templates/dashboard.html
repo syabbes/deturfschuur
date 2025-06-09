@@ -37,18 +37,14 @@
                     <div class="d-flex flex-wrap gap-3 justify-content-evenly w-75">
                         <div class="d-flex flex-column align-items-center ml-4">
                             <p class="rem-title light mb-1">Prijs</p>
-                            <input placeholder="Prijs" type="number" step="0.01" value="0.00">
+                            <input placeholder="Prijs" type="number" step="0.01" value="0.00" name="prijs">
                         </div>
                         <div>
                             <p class="rem-title light mb-1">Herhaling</p>
                             <label for="herhaling" class="light crimson-pro-regular">Wordt herhaald om zoveel weken: </label>
-                            <input value="0" name="herhaling" min="0" max="52" type="number">
-                            <label for="eind_herhaling" class="light crimson-pro-regular">Herhaling eindigt na een: </label>
-                            <select name="eind_herhaling">
-                                <option value="maand">Maand</option>
-                                <option value="halfjaar">Half jaar</option>
-                                <option value="jaar">Jaar</option>
-                            </select>
+                            <input value="1" name="interval" min="1" max="52" type="number">
+                            <label for="eind_herhaling" class="light crimson-pro-regular">Wordt zoveel keer herhaald: </label>
+                            <input value="0" name="reeks" min="0" max="52" type="number">
                         </div>
                     </div>
                     <hr class="calendar-division my-1">

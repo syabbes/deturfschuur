@@ -7,6 +7,7 @@ from datetime import timedelta, datetime
 from helpers import login_required
 from email_validator import validate_email, EmailNotValidError
 import calendar
+import uuid
 
 # Configure application
 app = Flask(__name__)
@@ -117,6 +118,8 @@ def dashboard():
         eindtijd = datetime.strptime(request.form.get("einde"), "%Y-%m-%dT%H:%M")
         if eindtijd <= begintijd:
             return render_template("apology.html", apology="Eindtijd moet later dan begintijd zijn")
+        if ((eindtijd - begintijd) >= timedelta(days=1)):
+            return render_template("apology.html", apology="Afspraak duurt te lang")
         
         titel = request.form.get("titel").strip()
         prijs = float(request.form.get("prijs"))
@@ -125,14 +128,25 @@ def dashboard():
         
         naam = request.form.get("naam").lower().strip()
         straat = request.form.get("straat").lower().strip()
+        if not straat:
+            straat = None
         hn = request.form.get("huisnummer").lower().split()
         huisnummer = "".join(hn)
+        if not huisnummer:
+            huisnummer = None
         post = request.form.get("postcode").lower().split()
         postcode = "".join(post)
+        if not postcode:
+            postcode = None
         plaats = request.form.get("woonplaats").lower().strip()
+        if not plaats:
+            plaats = None
         land = request.form.get("land").lower().strip()
+        if not land:
+            land = "Nederland"
 
-        print(postcode + huisnummer)
+        repeat = request.form.get("interval")
+        repeatx = request.form.get("reeks")
 
         # If address is filled in, check if the address/person is yet in the database
         if naam and postcode and huisnummer:
@@ -141,14 +155,10 @@ def dashboard():
                             FROM adressenbestand
                             WHERE naam = ? AND postcode = ? AND huisnummer = ?""",
                              naam, postcode, huisnummer)
-            # If it is, adres_id is set to the address/person
-            if len(adres_id) > 0:
-                try:
-                    add_app(titel, begintijd, eindtijd, prijs, info, adres_id[0])
-                except:
-                    return render_template("apology.html", apology="Kon afspraak niet toevoegen")
             # If not, add new address/person to address table (fields cant be null)
-            else:
+            print(type(adres_id))
+            print(len(adres_id))
+            if len(adres_id) <= 0:
                 try:
                     id = db.execute("""INSERT INTO adressenbestand
                                     (naam, straat, huisnummer, woonplaats, land, postcode, contact)
@@ -156,27 +166,50 @@ def dashboard():
                                     naam, straat, huisnummer, plaats, land, postcode, request.form.get("contactgegevens"))
                 except ValueError:
                     return render_template("apology.html", apology="Niet alle benodigde gegevens zijn ingevuld")
-                except:
-                    return render_template("apology.html", apology="Er is iets misgegaan")
+                
                 try:
-                    add_app(titel, begintijd, eindtijd, prijs, info, id)
-                except:
-                    return render_template("apology.html", apology="Kon afspraak niet toevoegen")
+                    add_app(titel, begintijd, eindtijd, prijs, info, id, repeat, repeatx)
+                except ValueError:
+                    return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
+            # Else if there's a name/address, add appointment with adres_id set to name/address
+            else:
+                try:
+                    add_app(titel, begintijd, eindtijd, prijs, info, adres_id[0]["adres_id"], repeat, repeatx)
+                except ValueError:
+                    return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
                 
         # Else if address isnt filled in, just add appointment to database with the adres_id set to null
         else:
             try:
-                add_app(titel, begintijd, eindtijd, prijs, info, None)
-            except:
-                    return render_template("apology.html", apology="Kon afspraak niet toevoegen")
+                add_app(titel, begintijd, eindtijd, prijs, info, None, repeat, repeatx)
+            except ValueError:
+                    return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
         return redirect("/dashboard")
     
 # functions
-def add_app(titel, begin, eind, prijs, info, adres_id):
-    try:
+def add_app(titel, begin, eind, prijs, info, adres_id, interval, reeks):
+    begindates = [begin]
+    enddates = [eind]
+    if int(reeks) > 0:
+        # Yield error if repeat-values are incorrect
+        if int(reeks) > 52 or int(interval) < 1 or int(interval) > 52:
+            raise ValueError("Ongeldige herhaling ingesteld")
+        
+        #generate unique reeks_id
+        id = uuid.uuid1().int * 4
+        # Calculate next dates
+        for i in range(int(reeks)):
+            begindates.append(begindates[i] + timedelta(weeks=int(interval)))
+            enddates.append(enddates[i] + timedelta(weeks=int(interval)))
+        
+        for b, e in zip(begindates, enddates):
+            db.execute("""INSERT INTO afspraken
+                        (titel, begin, eind, prijs, info, adres_id, reeks_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)""", 
+                        titel,b, e, prijs, info, adres_id, id)
+    # If no repetition, just add one appointment with reeks_id set to NULL 
+    else:
         db.execute("""INSERT INTO afspraken
                     (titel, begin, eind, prijs, info, adres_id)
                     VALUES (?, ?, ?, ?, ?, ?)""", 
-                    titel, begin, eind, prijs, info, adres_id)
-    except Exception as e:
-        raise RuntimeError("Kon afspraak niet toevoegen") from e
+                    titel,begin, eind, prijs, info, adres_id)
