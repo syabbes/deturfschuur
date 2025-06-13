@@ -157,6 +157,7 @@ input:focus
 }
 .calendar td
 {
+    position: relative;
     border: solid;
     border-width: 0.5px;
     border-color: #ff9b54;
@@ -223,7 +224,7 @@ input:focus
 /* appointments popup window */
 .modal
 {
-    z-index: 1;
+    z-index: 2;
     left: 0;
     top: 0;
     width: 100%;
@@ -247,4 +248,16 @@ input:focus
     border-width: 0;
     background-color: #ece8ef;
     width: 80%;
+}
+.app-marker
+{
+    display: table-cell;
+    position: absolute;
+    z-index: 1;
+    background-color: #08415c;
+    width: 20px;
+    height: 20px;
+    color: #ece8ef;
+    vertical-align: middle;
+    line-height: 20px;
 }

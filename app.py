@@ -1,5 +1,5 @@
 from cs50 import SQL
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import timedelta, datetime
@@ -188,4 +188,19 @@ def dashboard():
             except ValueError:
                     return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
         return redirect("/dashboard")
-    
+
+# Route for ajax calendar request
+@app.route("/app_month", methods=["POST"])
+@login_required
+def get_appointments_month():
+    # Get the month of which the appointments should be loaded
+    month = request.form.get("month")
+    year = request.form.get("year")
+    mstring = str(month).zfill(2)
+    myear = str(year)
+    months = db.execute("""SELECT afspraak_id, begin, eind FROM afspraken
+                        WHERE strftime('%m', begin) = ? AND strftime('%Y', begin) = ?
+                        ORDER BY begin ASC""",
+                        mstring, myear)
+    return jsonify(months)
+

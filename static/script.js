@@ -39,7 +39,6 @@ function generate_calendar(year, month)
     
     // add month and year to calendar title
     let month_title = new Date(year, month);
-    console.log(month_title);
 
     calendar_month = document.getElementById("calendar-month");
     calendar_month.innerText = months[month_title.getMonth()] + " " + month_title.getFullYear();
@@ -79,6 +78,8 @@ function generate_calendar(year, month)
             itterator++;
         }
     }
+    // At the end, call the get_appointments function
+    get_appointments(year, month);
 }
 
 function load_calendar()
@@ -138,4 +139,57 @@ function setendtime()
     enddate.setHours(enddate.getHours() + 1);
     enddate.setMinutes(enddate.getMinutes() - enddate.getTimezoneOffset());
     datetime_einde.value = enddate.toISOString().slice(0,16);
+}
+// Function for getting the appointments in the calendar
+function get_appointments(y, m)
+{
+    $.ajax({
+        url: 'app_month',
+        type: 'POST',
+        data: {month: (m + 1), year: y},
+        success: function(response){
+            // Fill the calendar wih the appointments
+            // Loop over every appointment
+            for (let i = 0; i < response.length; i++)
+            {
+                // Turn dates to Datestring for comparing
+                beginday = new Date(response[i].begin).toDateString();
+                endday = new Date(response[i].eind).toDateString();
+                // Since appointments cant be longer than 1 day, just check if the begin and enddate is the same
+                // If end and begindate are the same, search for the associated day in the calendar
+                if (beginday == endday)
+                {
+                    // Add marker
+                    add_marker(beginday);
+                }
+                else
+                {
+                    add_marker(beginday);
+                    add_marker(endday);
+                }
+            }
+        }
+    })
+}
+function add_marker(date)
+{
+    // Check if there's already a marker
+    string = `[data-date="${date}"]`;
+    let cell = document.querySelector(string);
+    if (cell == null)
+    {
+        return;
+    }
+    let m = cell.getElementsByTagName("p");
+    if (m.length == 0)
+    {
+        // Add a new marker
+        cell.insertAdjacentHTML("afterbegin",
+        '<p class="app-marker top-0 end-0 text-align-center crimson-pro-regular rounded-circle">1</p>');
+    }
+    else
+    {
+        number = Number(m[0].innerText) + 1;
+        m[0].innerText = number;
+    }
 }

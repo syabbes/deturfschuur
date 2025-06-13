@@ -42,10 +42,10 @@ def add_app(titel, begin, eind, prijs, info, adres_id, interval, reeks):
             db.execute("""INSERT INTO afspraken
                         (titel, begin, eind, prijs, info, adres_id, reeks_id)
                         VALUES (?, ?, ?, ?, ?, ?, ?)""", 
-                        titel,b, e, prijs, info, adres_id, id)
+                        titel,b.isoformat(), e.isoformat(), prijs, info, adres_id, id)
     # If no repetition, just add one appointment with reeks_id set to NULL 
     else:
         db.execute("""INSERT INTO afspraken
                     (titel, begin, eind, prijs, info, adres_id)
                     VALUES (?, ?, ?, ?, ?, ?)""", 
-                    titel,begin, eind, prijs, info, adres_id)
+                    titel,begin.isoformat(), eind.isoformat(), prijs, info, adres_id)
