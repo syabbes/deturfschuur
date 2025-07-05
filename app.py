@@ -190,12 +190,12 @@ def dashboard():
         return redirect("/dashboard")
 
 # Route for ajax calendar request
-@app.route("/app_month", methods=["POST"])
+@app.route("/app_month", methods=["GET"])
 @login_required
 def get_appointments_month():
     # Get the month of which the appointments should be loaded
-    month = request.form.get("month")
-    year = request.form.get("year")
+    month = request.args.get("month")
+    year = request.args.get("year")
     mstring = str(month).zfill(2)
     myear = str(year)
     months = db.execute("""SELECT afspraak_id, begin, eind FROM afspraken
@@ -203,4 +203,29 @@ def get_appointments_month():
                         ORDER BY begin ASC""",
                         mstring, myear)
     return jsonify(months)
+
+# Route for ajax request for appointments on a day
+@app.route("/app_day", methods=["GET"])
+@login_required
+def get_appointments_day():
+    # Get the day
+    day_str = request.args.get("day")
+    if day_str is None:
+        jsonify([])
+    day = datetime.strptime(day_str, '%a %b %d %Y')
+    
+    # Get end of day (or start new day)
+    endday = day + timedelta(days=1)
+    # Convert both back to iso 8601 format
+    day.replace(microsecond=0).isoformat()
+    endday.replace(microsecond=0).isoformat()
+    print(f"day: {day} endday: {endday}")
+    # Query database for every appointment where the starttime <= endday and endtime >= day
+    day_appointments = db.execute("""SELECT afspraak_id, titel, begin, eind FROM afspraken
+                                  WHERE begin <= ? AND eind >= ?""",
+                                  endday, day)
+    print(day_appointments)
+    
+    return jsonify(day_appointments)
+
 

@@ -117,6 +117,13 @@ calendar.addEventListener("click", function(event){
     clicked_day = event.target;
     setbegintime();
     setendtime();
+    // Remove all appointments
+    let apps = document.getElementById("appointments")
+    while (apps.hasChildNodes())
+    {
+        apps.removeChild(apps.children[0]);
+    }
+    get_appointments_day(clicked_day.dataset.date);
 })
 
 // eventlistener for close button of modal
@@ -145,7 +152,7 @@ function get_appointments(y, m)
 {
     $.ajax({
         url: 'app_month',
-        type: 'POST',
+        type: 'GET',
         data: {month: (m + 1), year: y},
         success: function(response){
             // Fill the calendar wih the appointments
@@ -167,6 +174,60 @@ function get_appointments(y, m)
                     add_marker(beginday);
                     add_marker(endday);
                 }
+            }
+        }
+    })
+}
+// Define datetime format
+const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+};
+const datetime_format = new Intl.DateTimeFormat("nl-NL", options);
+function get_appointments_day(day)
+{
+    $.ajax({
+        url: 'app_day',
+        type: 'GET',
+        data: {day: day},
+        success: function(response){
+            // Get the div in which the appointments need to come
+            appointment_div = document.getElementById("appointments");
+            // loop over every appointment
+            for (let i = 0; i < response.length; i++)
+            {
+                // Add appointment to the modal
+                let app_div = document.createElement("div");
+                app_div.classList.add("app_div")
+                let title = document.createElement("p");
+                title.classList.add("rem-title", "app-title");
+                title.innerText = response[i].titel;
+
+                let time = document.createElement("p");
+                time.classList.add("crimson-pro-regular", "app-time");
+                let starttime = new Date(response[i].begin);
+                let endtime = new Date(response[i].eind);
+                // Check if begin and endtime are on the same day
+                if (endtime.toDateString() == starttime.toDateString())
+                {
+                    // Show only hours and minutes
+                    var string = (starttime.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'})) + " - " + (endtime.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'}));
+                }
+                else
+                {
+                    // Show full datetime in nl format
+                    var string = (datetime_format.format(starttime)) + " - " + (datetime_format.format(endtime))
+                }
+                time.innerText = string
+
+                // Add time and title to the div
+                app_div.appendChild(title)
+                app_div.appendChild(time)
+                // Add div to the div for the appointments
+                appointment_div.appendChild(app_div)
             }
         }
     })
