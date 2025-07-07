@@ -187,6 +187,7 @@ const options = {
     minute: "numeric",
 };
 const datetime_format = new Intl.DateTimeFormat("nl-NL", options);
+var list_of_appointments = {};
 function get_appointments_day(day)
 {
     $.ajax({
@@ -194,6 +195,8 @@ function get_appointments_day(day)
         type: 'GET',
         data: {day: day},
         success: function(response){
+            // Store the response in global var
+            list_of_appointments = response;
             // Get the div in which the appointments need to come
             appointment_div = document.getElementById("appointments");
             // loop over every appointment
@@ -201,6 +204,7 @@ function get_appointments_day(day)
             {
                 // Add appointment to the modal
                 let app_div = document.createElement("div");
+                app_div.setAttribute("data-id", response[i].afspraak_id);
                 app_div.classList.add("app_div")
                 let title = document.createElement("p");
                 title.classList.add("rem-title", "app-title");
@@ -253,4 +257,31 @@ function add_marker(date)
         number = Number(m[0].innerText) + 1;
         m[0].innerText = number;
     }
+}
+
+// Eventlistener for the list of appointments
+let list_apps = document.getElementById("appointments")
+let app_modal = document.getElementById("app-modal");
+list_apps.addEventListener("click", function(event){
+    let app_div = event.target.closest(".app_div");
+    // Check if there is indeed an appointment
+    if (!app_div)
+    {
+        return;
+    }
+    // Load the modal for the appointment
+    load_app_info(app_div.getAttribute("data-id"));
+})
+
+// eventlistener for close button of appointment modal
+document.getElementById("close-app-modal").addEventListener("click", function(){
+    app_modal.style.display = "none";
+});
+
+function load_app_info(app_id)
+{
+    console.log(app_id);
+    console.log(list_of_appointments);
+    // Show the modal
+    app_modal.style.display = "block";
 }

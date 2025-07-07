@@ -210,6 +210,7 @@ def get_appointments_month():
 def get_appointments_day():
     # Get the day
     day_str = request.args.get("day")
+    # If something went wrong with the ajax request, just return an empty list
     if day_str is None:
         jsonify([])
     day = datetime.strptime(day_str, '%a %b %d %Y')
@@ -221,7 +222,9 @@ def get_appointments_day():
     endday.replace(microsecond=0).isoformat()
     print(f"day: {day} endday: {endday}")
     # Query database for every appointment where the starttime <= endday and endtime >= day
-    day_appointments = db.execute("""SELECT afspraak_id, titel, begin, eind FROM afspraken
+    day_appointments = db.execute("""SELECT afspraken.*, adressenbestand.adres_id, adressenbestand.voorletter, adressenbestand.achternaam
+                                  FROM afspraken
+                                  LEFT JOIN adressenbestand ON afspraken.adres_id = adressenbestand.adres_id
                                   WHERE begin <= ? AND eind >= ?""",
                                   endday, day)
     print(day_appointments)
