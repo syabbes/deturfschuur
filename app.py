@@ -5,6 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import timedelta, datetime
 from helpers import login_required, add_app
 from email_validator import validate_email, EmailNotValidError
+import re
 
 # Configure application
 app = Flask(__name__)
@@ -123,8 +124,15 @@ def dashboard():
         contact = request.form.get("contactgegevens").strip()
         info = request.form.get("info").strip()
         
-        vl = request.form.get("voorletter").upper().strip()
-        an = request.form.get("achternaam").lower().strip()
+        vl_raw = request.form.get("voorletter")
+        if vl_raw is None:
+            vl = None
+        else:
+            # Get all of the letters
+            letters = re.findall("[a-zA-Z]", vl_raw)
+            # make everything uppercase and add a dot after every letter
+            vl = ((".".join(letters)) + ".").upper()
+        an = request.form.get("achternaam").upper().strip()
         
         straat = request.form.get("straat").lower().strip()
         if not straat:
@@ -152,9 +160,6 @@ def dashboard():
             # Check if initial or surname is empty
             if not an or not vl:
                 return render_template("apology.html", apology="Moet zowel een voorletter als een achternaam zijn opgegeven om in het adressenbestand te zoeken")
-            # Check if initial is 1 letter and 1 dot
-            if len(vl) > 2 or vl[-1] != ".":
-                return render_template("apology.html", apology="Voorletter heeft een letter en een punt")
             # Querie database for right address id
             adres_id = db.execute("""SELECT adres_id
                                     FROM adressenbestand

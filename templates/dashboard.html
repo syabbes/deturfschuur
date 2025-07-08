@@ -11,24 +11,24 @@
             <div class="d-flex justify-content-end">
                 <button class="btn close-button" id="close-app-modal">&times;</button>
             </div>
-            <form>
-                <p class="rem-title mb-1 light">Titel</p>
-                <input type="text" name="app-titel">
-                <p id="app-person"></p>
+            <form id="info-form">
+                <p class="rem-title mb-1 light label">Titel</p>
+                <input class="crimson-pro-regular" type="text" name="app-titel">
+                <p class="crimson-pro-regular light mt-3" id="app-person"></p>
                 <div class="d-flex gap-3 flex-wrap justify-content-evenly">
                     <div class="d-flex flex-column align-items-center">
-                        <p class="rem-title mb-1 light">Begin</p>
-                        <input type="datetime-local" name="app-begin">
+                        <p class="rem-title mb-1 light label">Begin</p>
+                        <input class="crimson-pro-regular" type="datetime-local" name="app-begin">
                     </div>
                     <div class="d-flex flex-column align-items-center">
-                        <p class="rem-title mb-1 light">Eind</p>
-                        <input type="datetime-local" name="app-eind">
+                        <p class="rem-title mb-1 light label">Eind</p>
+                        <input class="crimson-pro-regular" type="datetime-local" name="app-eind">
                     </div>
                 </div>
-                <p class="rem-title mb-1 light">Prijs</p>
-                <input type="number" step="0.01" name="app-prijs">
-                <p class="rem-title light mb-1">Overige informatie</p>
-                <input type="text" name="app-info">
+                <p class="rem-title mb-1 light label">Prijs</p>
+                <input class="crimson-pro-regular" type="number" step="0.01" name="app-prijs">
+                <p class="rem-title light mb-1 label">Overige informatie</p>
+                <input class="crimson-pro-regular" type="text" name="app-info">
             </form>
         </div>
     </div>
@@ -80,7 +80,7 @@
                         <div class="d-flex flex-column align-items-center">
                             <p class="rem-title light mb-1">Adres</p>
                             <div class="justify-content-evenly">
-                                <input type="text" placeholder="Voorletter" name="voorletter" class="mb-1 my-1">
+                                <input type="text" placeholder="Voorletters" name="voorletter" class="mb-1 my-1">
                                 <input type="text" placeholder="Achternaam" name="achternaam" class="mb-1">
                             </div>
                             <input type="text" placeholder="Straat" name="straat" class="mb-1">

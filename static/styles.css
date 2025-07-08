@@ -83,6 +83,7 @@ a
 {
     color: #231e1e;
 }
+
 /* fonts */
 .rem-title 
 {
@@ -98,6 +99,7 @@ a
     font-weight: 256;
     font-style: normal;
 }
+
 /* form */
 .form
 {
@@ -317,4 +319,43 @@ input:focus
     padding: 20px;
     background-color: #08415c;
     text-align: center;
+    border-radius: 5px;
+}
+.app-info-form input
+{
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 0.5px solid #6c6969 !important;
+    text-align: center;
+    font-size: 120%;
+}
+.app-info-form .label
+{
+    font-size: 150%;
+    margin-top: 1rem;
+}
+.app-info-form [name="app-prijs"]
+{
+    width: auto;
+}
+.app-info-form form
+{
+    margin-bottom: 3rem;
+}
+/* Hide the default date picker icon in Chrome, Safari, and Edge */
+/* Chrome, Edge, Safari (Webkit/Blink): */
+.app-info-form [type="datetime-local"]::-webkit-calendar-picker-indicator {
+    opacity: 0; /* of visibility: hidden */
+    pointer-events: none; /* zodat het niet aanklikbaar is */
+}
+/* Chrome, Safari, Edge */
+.app-info-form [type="number"]::-webkit-inner-spin-button,
+.app-info-form [type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+.app-info-form [type="number"] {
+    -moz-appearance: textfield;
 }

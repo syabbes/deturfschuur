@@ -271,7 +271,7 @@ list_apps.addEventListener("click", function(event){
     }
     // Load the modal for the appointment
     load_app_info(app_div.getAttribute("data-id"));
-})
+});
 
 // eventlistener for close button of appointment modal
 document.getElementById("close-app-modal").addEventListener("click", function(){
@@ -282,6 +282,38 @@ function load_app_info(app_id)
 {
     console.log(app_id);
     console.log(list_of_appointments);
+    // Get the form with its elements
+    var form = document.getElementById("info-form");
+    form_inputs = form.elements
+    // Loop over all the appointments and look for the appointment with the right id
+    for (let i = 0; i < list_of_appointments.length; i++)
+    {
+        if (list_of_appointments[i].afspraak_id == app_id)
+        {
+            // Update the input fields with the data of json[i]
+            form_inputs["app-titel"].value = list_of_appointments[i].titel;
+            form_inputs["app-prijs"].value = list_of_appointments[i].prijs.toFixed(2);
+            form_inputs["app-info"].value = list_of_appointments[i].info;
+            // Convert times to datetime-local
+            let app_begin = new Date(list_of_appointments[i].begin);
+            app_begin.setMinutes(app_begin.getMinutes() - app_begin.getTimezoneOffset());
+            let app_eind = new Date(list_of_appointments[i].eind);
+            app_eind.setMinutes(app_eind.getMinutes() - app_eind.getTimezoneOffset());
+            // Update time input fields
+            form_inputs["app-begin"].value = app_begin.toISOString().slice(0,16);
+            form_inputs["app-eind"].value = app_eind.toISOString().slice(0,16);
+            // Update the p tag with the person
+            // the right p tag is the third child of the form
+            let achternaam = list_of_appointments[i].achternaam
+            if (achternaam != null)
+            {
+                let c_achternaam = achternaam.charAt(0).toUpperCase() + achternaam.slice(1);
+                form.children[2].innerText = (list_of_appointments[i].voorletter.toUpperCase() + " " + c_achternaam + " (id: " + String(list_of_appointments[i].adres_id) + ")");
+            }
+            // No need to finish the loop since the right id has already been found
+            break;
+        }
+    }
     // Show the modal
     app_modal.style.display = "block";
 }
