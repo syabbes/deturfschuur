@@ -117,6 +117,12 @@ a
     border: 1px solid #ff9b54 !important;
     color: #ece8ef !important;
 }
+.dark-button
+{
+    background-color: #052b3d !important;
+    border: 1px solid #ff9b54 !important;
+    color: #ece8ef !important;
+}
 input
 {
     background-color: #56351e !important;
@@ -329,6 +335,13 @@ input:focus
     text-align: center;
     font-size: 120%;
 }
+.app-info-form input:focus
+{
+    outline: none;
+    box-shadow: none !important;
+    border: none !important;
+    border-bottom: #ff9b54 1px solid !important;
+}
 .app-info-form .label
 {
     font-size: 150%;
@@ -358,4 +371,35 @@ input:focus
 /* Firefox */
 .app-info-form [type="number"] {
     -moz-appearance: textfield;
+}
+
+/* Popup message for appointments */
+.popup-message
+{
+    visibility: hidden;
+    width: auto;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 3;
+    bottom: 125%;
+}
+.popup-message.show
+{
+    visibility: visible !important;
+    -webkit-animation: fadeIn 1s !important;
+    animation: fadeIn 1s !important;
+}
+@-webkit-keyframes fadeIn
+{
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+@keyframes fadeIn
+{
+    from {opacity: 0;}
+    to {opacity: 1;}
 }

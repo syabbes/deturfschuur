@@ -260,7 +260,8 @@ function add_marker(date)
 }
 
 // Eventlistener for the list of appointments
-let list_apps = document.getElementById("appointments")
+let list_apps = document.getElementById("appointments");
+var div_popup = document.getElementById("update-appointment-popup")
 let app_modal = document.getElementById("app-modal");
 list_apps.addEventListener("click", function(event){
     let app_div = event.target.closest(".app_div");
@@ -273,9 +274,33 @@ list_apps.addEventListener("click", function(event){
     load_app_info(app_div.getAttribute("data-id"));
 });
 
-// eventlistener for close button of appointment modal
-document.getElementById("close-app-modal").addEventListener("click", function(){
-    app_modal.style.display = "none";
+// Eventlistener for all of the buttons of appointment modal
+app_modal.addEventListener("click", function(event){
+    let is_delete;
+    // Check if popup message is visible
+    if (div_popup.classList.contains("show"))
+    {
+        div_popup.classList.remove("show");
+    }
+    // Else check which button is pressed
+    else if (event.target.id == "close-app-modal")
+    {
+        app_modal.style.display = "none";
+    }
+    else if (event.target.id == "btn-update")
+    {
+        is_delete = false;
+        div_popup.classList.add("show");
+        console.log(is_delete);
+    }
+    else if (event.target.id == "btn-delete")
+    {
+        is_delete = true;
+        div_popup.classList.add("show");
+        console.log(is_delete);
+    }
+    // TODO check which buttons inside popup are pressed and send form back to server
+    // Also dont forget to add invisible input field which contains information about what should be updated/deleted (all/single) and (delete/update)
 });
 
 function load_app_info(app_id)

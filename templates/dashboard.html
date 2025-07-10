@@ -30,6 +30,18 @@
                 <p class="rem-title light mb-1 label">Overige informatie</p>
                 <input class="crimson-pro-regular" type="text" name="app-info">
             </form>
+            <!-- Popup message -->
+            <div class="d-flex gap-3 flex-wrap justify-content-evenly mt-3 position-relative">
+                <button id="btn-update" class="btn button dark-button" type="button">Bijwerken</button>
+                <button id="btn-delete" class="btn button close-button" type="button">Verwijderen</button>
+                <div class="popup-message d-flex flex-column" id="update-appointment-popup">
+                    <p>Welke afspraken moeten worden bijgewerkt/verwijderd?</p>
+                    <div id="update-btns" class="d-flex flex-wrap justify-content-center">
+                        <button id="btn-all" class="btn button">Allemaal</button>
+                        <button id="btn-single" class="btn button">Alleen deze</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- popup window -->
