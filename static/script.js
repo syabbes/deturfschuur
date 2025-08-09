@@ -263,6 +263,8 @@ function add_marker(date)
 let list_apps = document.getElementById("appointments");
 var div_popup = document.getElementById("update-appointment-popup")
 let app_modal = document.getElementById("app-modal");
+var is_delete;
+var flag;
 list_apps.addEventListener("click", function(event){
     let app_div = event.target.closest(".app_div");
     // Check if there is indeed an appointment
@@ -276,7 +278,8 @@ list_apps.addEventListener("click", function(event){
 
 // Eventlistener for all of the buttons of appointment modal
 app_modal.addEventListener("click", function(event){
-    let is_delete;
+    let info_form = document.getElementById("info-form");
+    inputs_info_form = info_form.elements;
     // Check if popup message is visible
     if (div_popup.classList.contains("show"))
     {
@@ -299,7 +302,38 @@ app_modal.addEventListener("click", function(event){
         div_popup.classList.add("show");
         console.log(is_delete);
     }
-    // TODO check which buttons inside popup are pressed and send form back to server
+
+    if (event.target.id == "btn-all")
+    {
+        // Check status of is_delete
+        if (is_delete === true)
+        {
+            flag = 2;
+        }
+        else
+        {
+            flag = 0;
+        }
+        // Update invisible input field
+        inputs_info_form["updatedelete-flag"].value = flag;
+        console.log(flag);
+        info_form.submit();
+    }
+    else if (event.target.id == "btn-single")
+    {
+        if (is_delete === true)
+        {
+            flag = 3;
+        }
+        else
+        {
+            flag = 1;
+        }
+        // Update invisible input field
+        inputs_info_form["updatedelete-flag"].value = flag;
+        console.log(flag);
+        info_form.submit();
+    }
     // Also dont forget to add invisible input field which contains information about what should be updated/deleted (all/single) and (delete/update)
 });
 
@@ -309,7 +343,7 @@ function load_app_info(app_id)
     console.log(list_of_appointments);
     // Get the form with its elements
     var form = document.getElementById("info-form");
-    form_inputs = form.elements
+    form_inputs = form.elements;
     // Loop over all the appointments and look for the appointment with the right id
     for (let i = 0; i < list_of_appointments.length; i++)
     {
@@ -327,6 +361,8 @@ function load_app_info(app_id)
             // Update time input fields
             form_inputs["app-begin"].value = app_begin.toISOString().slice(0,16);
             form_inputs["app-eind"].value = app_eind.toISOString().slice(0,16);
+            // Update hidden field with id
+            form_inputs["id"].value = app_id;
             // Update the p tag with the person
             // the right p tag is the third child of the form
             let achternaam = list_of_appointments[i].achternaam

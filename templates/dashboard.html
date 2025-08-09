@@ -11,7 +11,7 @@
             <div class="d-flex justify-content-end">
                 <button class="btn close-button" id="close-app-modal">&times;</button>
             </div>
-            <form id="info-form">
+            <form id="info-form" method="post">
                 <p class="rem-title mb-1 light label">Titel</p>
                 <input class="crimson-pro-regular" type="text" name="app-titel">
                 <p class="crimson-pro-regular light mt-3" id="app-person"></p>
@@ -29,6 +29,8 @@
                 <input class="crimson-pro-regular" type="number" step="0.01" name="app-prijs">
                 <p class="rem-title light mb-1 label">Overige informatie</p>
                 <input class="crimson-pro-regular" type="text" name="app-info">
+                <input type="hidden" name="updatedelete-flag" id="flag">
+                <input type="hidden" name="id">
             </form>
             <!-- Popup message -->
             <div class="d-flex gap-3 flex-wrap justify-content-evenly mt-3 position-relative">
@@ -37,8 +39,8 @@
                 <div class="popup-message d-flex flex-column" id="update-appointment-popup">
                     <p>Welke afspraken moeten worden bijgewerkt/verwijderd?</p>
                     <div id="update-btns" class="d-flex flex-wrap justify-content-center">
-                        <button id="btn-all" class="btn button">Allemaal</button>
-                        <button id="btn-single" class="btn button">Alleen deze</button>
+                        <button id="btn-all" class="btn button mx-1">Allemaal</button>
+                        <button id="btn-single" class="btn button mx-1">Alleen deze</button>
                     </div>
                 </div>
             </div>

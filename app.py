@@ -109,6 +109,78 @@ def dashboard():
         return render_template("dashboard.html")
     # post for posting appointments
     else:
+        # Check if the form has an input field called flag
+        flag = request.form.get("updatedelete-flag")
+        print(f"flag: {flag}")
+        if flag is not None:
+            # Handle the update/delete appointment form
+            # Update alle = 0
+            # Update enkele = 1
+            # Verwijder alle = 2
+            # Verwijder enkele = 3
+
+            # Get all info
+            id = request.form.get("id")
+            titel = request.form.get("app-titel")
+            begin = datetime.strptime(request.form.get("app-begin"), "%Y-%m-%dT%H:%M")
+            eind = datetime.strptime(request.form.get("app-eind"), "%Y-%m-%dT%H:%M")
+            prijs = request.form.get("app-prijs")
+            info = request.form.get("app-info")
+            if not titel or not begin or not eind:
+                return render_template("apology.html", apology="Afspraak moet minstens een titel, begin- en eindtijd bevatten")
+            if eind <= begin:
+                return render_template("apology.html", apology="Eindtijd moet later dan begintijd zijn")
+            if ((eind - begin) >= timedelta(days=1)):
+                return render_template("apology.html", apology="Afspraak duurt te lang")
+            
+            # Switch case for the different cases like updating/deleting and all/single
+            match int(flag):
+                case 0:
+                    # Update all
+                    # Select all targeted appointments
+                    appointments = db.execute("""SELECT afspraak_id, begin, eind
+                                              FROM afspraken
+                                              WHERE reeks_id = (
+                                              SELECT reeks_id
+                                              FROM afspraken
+                                              WHERE afspraak_id = ?
+                                              )""", id)
+                    if len(appointments) <= 0:
+                        appointments = [{"afspraak_id": id}]
+                    
+                    print(appointments)
+                    # Calculate time difference
+                    # Get correct appointment for comparing
+                    right_app_time = db.execute("""SELECT begin, eind
+                                                FROM afspraken WHERE afspraak_id = ?""", id)
+                    original_begin = datetime.fromisoformat(right_app_time[0]["begin"])
+                    original_end = datetime.fromisoformat(right_app_time[0]["eind"])
+                    timediff_begin = begin - original_begin
+                    timediff_eind = eind - original_end
+                    # For every appointment in the series, update everything
+                    for app in appointments:
+                        # Calculate the new datetimes
+                        new_begin = datetime.fromisoformat(app["begin"]) + timediff_begin
+                        new_eind = datetime.fromisoformat(app["eind"]) + timediff_eind
+                        db.execute("""UPDATE afspraken
+                                   SET titel = ?, begin = ?, eind = ?, prijs = ?, info = ?
+                                   WHERE afspraak_id = ?""", titel, new_begin.isoformat(), new_eind.isoformat(), prijs, info, app["afspraak_id"])
+                case 1:
+                    # Update single
+                    return render_template("apology.html", apology="Nog niet geimplementeerd")
+                case 2:
+                    # Delete all
+                    return render_template("apology.html", apology="Nog niet geimplementeerd")
+                case 3:
+                    # Delete single
+                    return render_template("apology.html", apology="Nog niet geimplementeerd")
+                case _:
+                    return render_template("apology.html", apology="Gelieve niet aan de code lopen prutsen")
+
+            return redirect("/dashboard")
+
+
+
         if not request.form.get("titel") or not request.form.get("begin") or not request.form.get("einde"):
             return render_template("apology.html", apology="Minstens een titel, begin- en eindtijd instellen")
         # check if end time is later than begin time

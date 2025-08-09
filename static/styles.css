@@ -378,11 +378,11 @@ input:focus
 {
     visibility: hidden;
     width: auto;
-    background-color: #555;
+    background-color: #03161f;
     color: #fff;
     text-align: center;
     border-radius: 6px;
-    padding: 8px 0;
+    padding: 8px 10px;
     position: absolute;
     z-index: 3;
     bottom: 125%;
