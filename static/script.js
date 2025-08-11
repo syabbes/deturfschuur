@@ -79,7 +79,7 @@ function generate_calendar(year, month)
         }
     }
     // At the end, call the get_appointments function
-    get_appointments(year, month);
+    get_appointments(month_title.getFullYear(), month_title.getMonth());
 }
 
 function load_calendar()
@@ -148,9 +148,14 @@ function setendtime()
     datetime_einde.value = enddate.toISOString().slice(0,16);
 }
 // Function for getting the appointments in the calendar
+var progress = null;
 function get_appointments(y, m)
 {
-    $.ajax({
+    if (progress)
+    {
+        progress.abort();
+    }
+    progress = $.ajax({
         url: 'app_month',
         type: 'GET',
         data: {month: (m + 1), year: y},
@@ -175,6 +180,7 @@ function get_appointments(y, m)
                     add_marker(endday);
                 }
             }
+            progress = null
         }
     })
 }

@@ -164,16 +164,28 @@ def dashboard():
                         new_eind = datetime.fromisoformat(app["eind"]) + timediff_eind
                         db.execute("""UPDATE afspraken
                                    SET titel = ?, begin = ?, eind = ?, prijs = ?, info = ?
-                                   WHERE afspraak_id = ?""", titel, new_begin.isoformat(), new_eind.isoformat(), prijs, info, app["afspraak_id"])
+                                   WHERE afspraak_id = ?""", 
+                                   titel, new_begin.isoformat(), new_eind.isoformat(), prijs, info, app["afspraak_id"])
                 case 1:
                     # Update single
-                    return render_template("apology.html", apology="Nog niet geimplementeerd")
+                    db.execute("""UPDATE afspraken
+                               SET titel = ?, begin = ?, eind = ?, prijs = ?, info = ?
+                               WHERE afspraak_id = ?""", 
+                               titel, begin.isoformat(), eind.isoformat(), prijs, info, id)
                 case 2:
                     # Delete all
-                    return render_template("apology.html", apology="Nog niet geimplementeerd")
+                    db.execute("""DELETE FROM afspraken
+                               WHERE reeks_id = (
+                               SELECT reeks_id
+                               FROM afspraken
+                               WHERE afspraak_id = ?
+                               )""", 
+                               id)
                 case 3:
                     # Delete single
-                    return render_template("apology.html", apology="Nog niet geimplementeerd")
+                    db.execute("""DELETE FROM afspraken
+                               WHERE afspraak_id = ?""", 
+                               id)
                 case _:
                     return render_template("apology.html", apology="Gelieve niet aan de code lopen prutsen")
 
@@ -275,6 +287,7 @@ def get_appointments_month():
     year = request.args.get("year")
     mstring = str(month).zfill(2)
     myear = str(year)
+    print("month arg:", month, "year arg:", year)
     months = db.execute("""SELECT afspraak_id, begin, eind FROM afspraken
                         WHERE strftime('%m', begin) = ? AND strftime('%Y', begin) = ?
                         ORDER BY begin ASC""",
