@@ -345,7 +345,12 @@ input:focus
 .app-info-form .label
 {
     font-size: 150%;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
+}
+.app-info-form .sublabel
+{
+    font-size: 110%;
+    margin-top: 0.75rem;
 }
 .app-info-form [name="app-prijs"]
 {

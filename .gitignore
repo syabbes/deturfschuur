@@ -4,3 +4,4 @@ flask_session/
 .env
 .DS_Store
 *.db
+turfschuur.sqbpro

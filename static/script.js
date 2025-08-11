@@ -358,6 +358,9 @@ function load_app_info(app_id)
             // Update the input fields with the data of json[i]
             form_inputs["app-titel"].value = list_of_appointments[i].titel;
             form_inputs["app-prijs"].value = list_of_appointments[i].prijs.toFixed(2);
+            form_inputs["app-omschrijving"].value = list_of_appointments[i].omschrijving_prijs;
+            form_inputs["app-extra"].value = list_of_appointments[i].extra.toFixed(2);
+            form_inputs["app-omschrijving_extra"].value = list_of_appointments[i].omschrijving_extra;
             form_inputs["app-info"].value = list_of_appointments[i].info;
             // Convert times to datetime-local
             let app_begin = new Date(list_of_appointments[i].begin);
@@ -376,6 +379,10 @@ function load_app_info(app_id)
             {
                 let c_achternaam = achternaam.charAt(0).toUpperCase() + achternaam.slice(1);
                 form.children[2].innerText = (list_of_appointments[i].voorletter.toUpperCase() + " " + c_achternaam + " (id: " + String(list_of_appointments[i].adres_id) + ")");
+            }
+            else
+            {
+                form.children[2].innerText = ""
             }
             // No need to finish the loop since the right id has already been found
             break;

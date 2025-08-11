@@ -1,0 +1,17 @@
+{% extends "layout_bestuur.html" %}
+
+{% block title %}
+    De Turfschuur | Factuur genereren
+{% endblock %}
+
+{% block main %}
+<div class="gen-invoice pt-5 pb-5">
+    <form class="form">
+        <p class="rem-title light">Selecteer maand</p>
+        <div class="d-flex flex-row mx-auto">
+            <input type="month" class="crimson-pro-regular" name="month">
+            <button class="btn button mx-1">Genereer facturen</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

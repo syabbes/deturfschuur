@@ -21,7 +21,7 @@ def login_required(f):
     return decorated_function
 
 # functions
-def add_app(titel, begin, eind, prijs, info, adres_id, interval, reeks):
+def add_app(titel, begin, eind, prijs, desc_prijs, extra, desc_extra, info, adres_id, interval, reeks):
     from app import db
     begindates = [begin]
     enddates = [eind]
@@ -40,12 +40,12 @@ def add_app(titel, begin, eind, prijs, info, adres_id, interval, reeks):
         
         for b, e in zip(begindates, enddates):
             db.execute("""INSERT INTO afspraken
-                        (titel, begin, eind, prijs, info, adres_id, reeks_id)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)""", 
-                        titel,b.isoformat(), e.isoformat(), prijs, info, adres_id, id)
+                        (titel, begin, eind, prijs, omschrijving_prijs, extra, omschrijving_extra, info, adres_id, reeks_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
+                        titel, b.isoformat(), e.isoformat(), prijs, desc_prijs, extra, desc_extra, info, adres_id, id)
     # If no repetition, just add one appointment with reeks_id set to NULL 
     else:
         db.execute("""INSERT INTO afspraken
-                    (titel, begin, eind, prijs, info, adres_id)
-                    VALUES (?, ?, ?, ?, ?, ?)""", 
-                    titel,begin.isoformat(), eind.isoformat(), prijs, info, adres_id)
+                    (titel, begin, eind, prijs, omschrijving_prijs, extra, omschrijving_extra, info, adres_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
+                    titel, begin.isoformat(), eind.isoformat(), prijs, desc_prijs, extra, desc_extra, info, adres_id)

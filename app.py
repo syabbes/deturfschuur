@@ -125,6 +125,9 @@ def dashboard():
             begin = datetime.strptime(request.form.get("app-begin"), "%Y-%m-%dT%H:%M")
             eind = datetime.strptime(request.form.get("app-eind"), "%Y-%m-%dT%H:%M")
             prijs = request.form.get("app-prijs")
+            prijs_omschrijving = request.form.get("app-omschrijving")
+            extra = request.form.get("app-extra")
+            extra_omschrijving = request.form.get("app-omschrijving_extra")
             info = request.form.get("app-info")
             if not titel or not begin or not eind:
                 return render_template("apology.html", apology="Afspraak moet minstens een titel, begin- en eindtijd bevatten")
@@ -146,7 +149,10 @@ def dashboard():
                                               WHERE afspraak_id = ?
                                               )""", id)
                     if len(appointments) <= 0:
-                        appointments = [{"afspraak_id": id}]
+                        appointments = db.execute("""SELECT afspraak_id, begin, eind
+                                                  FROM afspraken
+                                                  WHERE afspraak_id = ?""", 
+                                                  id)
                     
                     print(appointments)
                     # Calculate time difference
@@ -163,23 +169,27 @@ def dashboard():
                         new_begin = datetime.fromisoformat(app["begin"]) + timediff_begin
                         new_eind = datetime.fromisoformat(app["eind"]) + timediff_eind
                         db.execute("""UPDATE afspraken
-                                   SET titel = ?, begin = ?, eind = ?, prijs = ?, info = ?
+                                   SET titel = ?, begin = ?, eind = ?, prijs = ?, omschrijving_prijs = ?, extra = ?, omschrijving_extra = ?, info = ?
                                    WHERE afspraak_id = ?""", 
-                                   titel, new_begin.isoformat(), new_eind.isoformat(), prijs, info, app["afspraak_id"])
+                                   titel, new_begin.isoformat(), new_eind.isoformat(), prijs, prijs_omschrijving, extra, extra_omschrijving, info, app["afspraak_id"])
                 case 1:
                     # Update single
                     db.execute("""UPDATE afspraken
-                               SET titel = ?, begin = ?, eind = ?, prijs = ?, info = ?
+                               SET titel = ?, begin = ?, eind = ?, prijs = ?, omschrijving_prijs = ?, extra = ?, omschrijving_extra = ?, info = ?
                                WHERE afspraak_id = ?""", 
-                               titel, begin.isoformat(), eind.isoformat(), prijs, info, id)
+                               titel, begin.isoformat(), eind.isoformat(), prijs, prijs_omschrijving, extra, extra_omschrijving, info, id)
                 case 2:
                     # Delete all
-                    db.execute("""DELETE FROM afspraken
+                    n = db.execute("""DELETE FROM afspraken
                                WHERE reeks_id = (
                                SELECT reeks_id
                                FROM afspraken
                                WHERE afspraak_id = ?
                                )""", 
+                               id)
+                    if n <= 0:
+                        db.execute("""DELETE FROM afspraken
+                               WHERE afspraak_id = ?""", 
                                id)
                 case 3:
                     # Delete single
@@ -205,6 +215,9 @@ def dashboard():
         
         titel = request.form.get("titel").strip()
         prijs = float(request.form.get("prijs"))
+        desc_prijs = request.form.get("omschrijving")
+        extra = float(request.form.get("extra"))
+        desc_extra = request.form.get("omschrijving_extra")
         contact = request.form.get("contactgegevens").strip()
         info = request.form.get("info").strip()
         
@@ -260,23 +273,31 @@ def dashboard():
                     return render_template("apology.html", apology="Niet alle benodigde gegevens zijn ingevuld")
                 
                 try:
-                    add_app(titel, begintijd, eindtijd, prijs, info, id, repeat, repeatx)
+                    add_app(titel, begintijd, eindtijd, prijs, desc_prijs, extra, desc_extra, info, id, repeat, repeatx)
                 except ValueError:
                     return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
             # Else if there's a name/address, add appointment with adres_id set to name/address
             else:
                 try:
-                    add_app(titel, begintijd, eindtijd, prijs, info, adres_id[0]["adres_id"], repeat, repeatx)
+                    add_app(titel, begintijd, eindtijd, prijs, desc_prijs, extra, desc_extra, info, adres_id[0]["adres_id"], repeat, repeatx)
                 except ValueError:
                     return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
                 
         # Else if address isnt filled in, just add appointment to database with the adres_id set to null
         else:
             try:
-                add_app(titel, begintijd, eindtijd, prijs, info, None, repeat, repeatx)
+                add_app(titel, begintijd, eindtijd, prijs, desc_prijs, extra, desc_extra, info, None, repeat, repeatx)
             except ValueError:
                     return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
         return redirect("/dashboard")
+    
+# Route for generating invoices
+@app.route("/factuur", methods=["GET", "POST"])
+@login_required
+def factuur():
+    if request.method == "GET":
+        return render_template("factuur.html")
+
 
 # Route for ajax calendar request
 @app.route("/app_month", methods=["GET"])
