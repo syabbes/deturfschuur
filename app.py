@@ -1,11 +1,16 @@
 from cs50 import SQL
-from flask import Flask, redirect, render_template, request, session, jsonify
+from flask import Flask, redirect, render_template, request, session, jsonify, send_file
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from helpers import login_required, add_app
 from email_validator import validate_email, EmailNotValidError
 import re
+from werkzeug.utils import secure_filename
+from docx import Document
+from collections import defaultdict
+import os
+from zipfile import ZipFile
 
 # Configure application
 app = Flask(__name__)
@@ -129,6 +134,11 @@ def dashboard():
             extra = request.form.get("app-extra")
             extra_omschrijving = request.form.get("app-omschrijving_extra")
             info = request.form.get("app-info")
+            # Check if omschrijving_prijs en extra are empty
+            if prijs_omschrijving == "":
+                prijs_omschrijving = None
+            if extra_omschrijving == "":
+                extra_omschrijving = None
             if not titel or not begin or not eind:
                 return render_template("apology.html", apology="Afspraak moet minstens een titel, begin- en eindtijd bevatten")
             if eind <= begin:
@@ -188,9 +198,11 @@ def dashboard():
                                )""", 
                                id)
                     if n <= 0:
-                        db.execute("""DELETE FROM afspraken
-                               WHERE afspraak_id = ?""", 
-                               id)
+                        n = db.execute("""DELETE FROM afspraken
+                                    WHERE afspraak_id = ?""", 
+                                    id)
+                    if n <= 0:
+                        return render_template("apology.html", apology="Gelieve niet aan de code lopen prutsen")
                 case 3:
                     # Delete single
                     db.execute("""DELETE FROM afspraken
@@ -209,7 +221,7 @@ def dashboard():
         begintijd = datetime.strptime(request.form.get("begin"), "%Y-%m-%dT%H:%M")
         eindtijd = datetime.strptime(request.form.get("einde"), "%Y-%m-%dT%H:%M")
         if eindtijd <= begintijd:
-            return render_template("apology.html", apology="Eindtijd moet later dan begintijd zijn")
+            return render_template("apology.html", apology="Eindtijd moet later dan begintijd zijn"), 400
         if ((eindtijd - begintijd) >= timedelta(days=1)):
             return render_template("apology.html", apology="Afspraak duurt te lang")
         
@@ -297,6 +309,107 @@ def dashboard():
 def factuur():
     if request.method == "GET":
         return render_template("factuur.html")
+    else:
+        month_string = request.form.get("month")
+        if not month_string:
+            return render_template("apology.html", apology="Geen maand ingevuld"), 400
+        month = month_string.split('-')
+        file = request.files['template']
+        if file.filename != '':
+            # Check if the file is allowed
+            x = file.filename.rsplit('.', 1)
+            if file and x[1].lower() == "docx":
+                # Save file on system
+                filename = secure_filename("template.docx")
+                file.save('facturen/' + filename)
+            else:
+                return render_template("apology.html", apology="Gelieve enkel .docx bestanden up te loaden"), 400
+            
+        # Get all appointments in the specified month
+        appointments = db.execute("""SELECT afspraken.*, adressenbestand.*
+                                  FROM afspraken
+                                  LEFT JOIN adressenbestand ON afspraken.adres_id = adressenbestand.adres_id
+                                  WHERE strftime('%m', eind) = ? AND strftime('%Y', eind) = ? AND afspraken.adres_id IS NOT NULL
+                                  ORDER BY adres_id""",
+                                  month[1], month[0])
+        
+        if len(appointments) <= 0:
+            return "Geen afspraken op naam in deze maand"
+        # Make a list of dicts with the keywords to be replaced
+        customers = defaultdict(list)
+        for app in appointments:
+            customers[app['adres_id']].append(app)
+        print(dict(customers))
+        # For each customer, open the doc and replace all keywords
+        for adres_id, appt_list in customers.items():
+            doc = Document("facturen/template.docx")
+            # Replace all keywords for address in the paragraphs
+            postcode = appt_list[0]["postcode"]
+            pc = re.sub("[A-Za-z]+", lambda ele: " " + ele[0] + " ", postcode).upper()
+            total = 0
+            for app in appt_list:
+                total += float(app["prijs"])
+                if app["extra"] is not None:
+                    total += float(app["extra"])
+            today = date.today()
+            adres = {
+                "{{Voorletters}}": appt_list[0]["voorletter"],
+                "{{Achternaam}}": appt_list[0]["achternaam"],
+                "{{Straat}}": appt_list[0]["straat"],
+                "{{Huisnummer}}": appt_list[0]["huisnummer"],
+                "{{Postcode}}": pc,
+                "{{Woonplaats}}": appt_list[0]["woonplaats"],
+                "{{Totaal}}": str(total),
+                "{{Factuurdatum}}": today.strftime("%d-%m-%Y"),
+                "{{Factuurnummer}}": str(adres_id) + today.strftime("%d%m%Y"),
+                }
+            
+            for paragraph in list(doc.paragraphs):
+                for old, new in adres.items():
+                    if old in paragraph.text:
+                        paragraph.text = paragraph.text.replace(old, new)
+            
+            # put costs in table
+            # Search for the correct table
+            table = None
+            for t in list(doc.tables):
+                if len(t.columns) == 3:
+                    table = t
+            if table is None:
+                return render_template("apology.html", apology="geen tabel gevonden"), 400
+            
+            print(len(doc.tables))
+            print(table)
+            print(len(table.rows))
+            print(len(table.columns))
+            for app in appt_list:
+                row = table.add_row().cells
+                omsch_pr = app["omschrijving_prijs"]
+                if omsch_pr is None:
+                    omsch_pr = ""
+                row[0].text = omsch_pr
+                pr = "{:.2f}".format(float(app["prijs"]))
+                row[1].text = str("€" + pr)
+                row[2].text = "0,00%"
+                if app["omschrijving_extra"] is not None and app["extra"] is not None:
+                    row2 = table.add_row().cells
+                    row2[0].text = app["omschrijving_extra"]
+                    row2[1].text = "€" + str(app["extra"])
+                    row2[2].text = "0,00%"
+
+            savefilename = "facturen/generated/" + appt_list[0]["achternaam"] + str(adres_id) + "_" + today.strftime("%d%m%Y") + ".docx"
+            doc.save(savefilename)
+        # Zip all the generated invoices and send it back to the user
+        with ZipFile("./facturen/facturen.zip", "w") as zip:
+            for root, dir, files in os.walk("./facturen/generated"):
+                for file in files:
+                    print(os.path.join(root, file))
+                    zip.write(os.path.join(root, file), arcname=file)
+
+        return send_file("facturen/facturen.zip")
+        
+
+
 
 
 # Route for ajax calendar request

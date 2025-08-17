@@ -6,12 +6,16 @@
 
 {% block main %}
 <div class="gen-invoice pt-5 pb-5">
-    <form class="form">
-        <p class="rem-title light">Selecteer maand</p>
-        <div class="d-flex flex-row mx-auto">
-            <input type="month" class="crimson-pro-regular" name="month">
-            <button class="btn button mx-1">Genereer facturen</button>
+    <form class="form" method="post" enctype="multipart/form-data">
+        <div class="d-flex flex-row justify-content-center mx-auto">
+            <div class="d-flex flex-column mx-2 input-label">
+                <p class="rem-title light invoice-label">Selecteer maand</p>
+                <input type="month" class="crimson-pro-regular" name="month">
+            </div>
+            <button class="btn button mx-2" type="submit">Genereer facturen</button>
         </div>
+        <p class="crimson-pro-regular light mt-5">Upload hieronder een factuur-template (".docx" formaat). Als u er geen upload wordt het meest recente template gebruikt.</p>
+        <input type="file" accept=".doc, .docx" name="template" class="fileinput">
     </form>
 </div>
 {% endblock %}
