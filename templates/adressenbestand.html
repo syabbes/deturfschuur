@@ -1,0 +1,41 @@
+{% extends "layout_bestuur.html" %}
+
+{% block title %}
+    De Turfschuur | Adressenbestand
+{% endblock %}
+
+{% block main %}
+    <div class="adres_table">
+        <table class="table adressenbestand">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Voorletters</th>
+                    <th>Achternaam</th>
+                    <th>Straat</th>
+                    <th>Huisnummer</th>
+                    <th>Postcode</th>
+                    <th>Woonplaats</th>
+                    <th>Land</th>
+                    <th>Contactgegevens</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for address in adressen %}
+                    <tr>
+                        <td>{{ address["adres_id"] }}</td>
+                        <td>{{ address["voorletter"] }}</td>
+                        <td>{{ address["achternaam"] }}</td>
+                        <td>{{ address["straat"] }}</td>
+                        <td>{{ address["huisnummer"] }}</td>
+                        <td>{{ address["postcode"] }}</td>
+                        <td>{{ address["woonplaats"] }}</td>
+                        <td>{{ address["land"] }}</td>
+                        <td>{{ address["contact"] }}</td>
+                        <td><button onclick="delete_adres({{ address['adres_id'] }})"><img src="/static/delete.svg" alt="Delete button" width="28px" height="28px"></button></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -62,6 +62,7 @@ main
 {
     background-color: #231e1e;
     min-height: 100vh;
+    padding-top: 10px;
 }
 .patroon
 {
@@ -423,4 +424,50 @@ input:focus
     height: 70px;
     width: 70%;
     max-width: 70%;
+}
+
+/* styling for not yet allowed members */
+.div-toegang-vragen
+{
+    width: 90%;
+    background-color: #55341c;
+    padding: 0.5rem;
+    margin: auto;
+    border-style: solid;
+    border-color: #725744;
+    border-width: 2px;
+}
+.div-toegang-vragen .member
+{
+    width: 90%;
+    margin: 0% 1%;
+    padding: 5px 5px;
+    background-color: #08415c;
+    text-align: left;
+    border-radius: 5px;
+    justify-content: space-between;
+    align-items: center;
+
+}
+#goedgekeurd
+{
+    background-color: rgb(0, 154, 0);
+    border: #ece8ef;
+    height: 40px;
+    border: 1px solid #ff9b54 !important;
+    color: #ece8ef !important;
+}
+#goedgekeurd img
+{
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+#afgekeurd
+{
+    background-color: rgb(120, 3, 3);
+    border: #ece8ef;
+    height: 40px;
+    border: 1px solid #ff9b54 !important;
+    color: #ece8ef !important;
+    margin-left: 1rem;
 }

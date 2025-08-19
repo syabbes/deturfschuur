@@ -340,7 +340,6 @@ app_modal.addEventListener("click", function(event){
         console.log(flag);
         info_form.submit();
     }
-    // Also dont forget to add invisible input field which contains information about what should be updated/deleted (all/single) and (delete/update)
 });
 
 function load_app_info(app_id)
@@ -390,4 +389,16 @@ function load_app_info(app_id)
     }
     // Show the modal
     app_modal.style.display = "block";
+}
+
+// Delete address from address database
+function delete_adres(adres_id)
+{
+    confirm_delete = confirm("Let op, dit verwijdert het adres en de bijbehorende afspraken!");
+    if (confirm_delete == true)
+    {
+        $.post("/delete_address", {"adres_id": adres_id}, function(){
+            location.reload();
+        })
+    }
 }

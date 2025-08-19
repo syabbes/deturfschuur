@@ -1,5 +1,5 @@
 from cs50 import SQL
-from flask import Flask, redirect, render_template, request, session, jsonify, send_file
+from flask import Flask, redirect, render_template, request, session, jsonify, send_file, Response
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import timedelta, datetime, date
@@ -34,7 +34,6 @@ def after_request(response):
 # configure database connection
 db = SQL("sqlite:///turfschuur.db")
 db.execute("PRAGMA foreign_keys = ON")
-
 
 # home
 @app.route("/")
@@ -213,8 +212,6 @@ def dashboard():
 
             return redirect("/dashboard")
 
-
-
         if not request.form.get("titel") or not request.form.get("begin") or not request.form.get("einde"):
             return render_template("apology.html", apology="Minstens een titel, begin- en eindtijd instellen")
         # check if end time is later than begin time
@@ -257,7 +254,7 @@ def dashboard():
         plaats = request.form.get("woonplaats").lower().strip()
         if not plaats:
             plaats = None
-        land = request.form.get("land").lower().strip()
+        land = request.form.get("land").strip()
         if not land:
             land = "Nederland"
 
@@ -335,6 +332,11 @@ def factuur():
         
         if len(appointments) <= 0:
             return "Geen afspraken op naam in deze maand"
+        
+        # Remove all previous files
+        for root, dir, files in os.walk("./facturen/generated"):
+            for file in files:
+                os.remove(os.path.join(root, file))
         # Make a list of dicts with the keywords to be replaced
         customers = defaultdict(list)
         for app in appointments:
@@ -355,10 +357,10 @@ def factuur():
             adres = {
                 "{{Voorletters}}": appt_list[0]["voorletter"],
                 "{{Achternaam}}": appt_list[0]["achternaam"],
-                "{{Straat}}": appt_list[0]["straat"],
+                "{{Straat}}": str(appt_list[0]["straat"]).upper(),
                 "{{Huisnummer}}": appt_list[0]["huisnummer"],
                 "{{Postcode}}": pc,
-                "{{Woonplaats}}": appt_list[0]["woonplaats"],
+                "{{Woonplaats}}": str(appt_list[0]["woonplaats"]).upper(),
                 "{{Totaal}}": str(total),
                 "{{Factuurdatum}}": today.strftime("%d-%m-%Y"),
                 "{{Factuurnummer}}": str(adres_id) + today.strftime("%d%m%Y"),
@@ -407,10 +409,27 @@ def factuur():
                     zip.write(os.path.join(root, file), arcname=file)
 
         return send_file("facturen/facturen.zip")
-        
+    
+# Address database
+@app.route("/adressenbestand", methods=["GET"])
+@login_required
+def adressenbestand():
+    adressen = db.execute("""SELECT *
+                            FROM adressenbestand""")
+    return render_template("adressenbestand.html", adressen=adressen)
 
-
-
+# Board members
+@app.route("/bestuursleden", methods=["GET"])
+@login_required
+def bestuursleden():
+    bestuursleden = db.execute("""SELECT bestuurslid_id, naam, email
+                               FROM bestuursleden
+                               WHERE toegelaten = 1""")
+    
+    nnt = db.execute("""SELECT naam, email
+                     FROM bestuursleden
+                     WHERE toegelaten = 0""")
+    return render_template("bestuursleden.html", bestuursleden=bestuursleden, nnt=nnt)
 
 # Route for ajax calendar request
 @app.route("/app_month", methods=["GET"])
@@ -455,4 +474,29 @@ def get_appointments_day():
     
     return jsonify(day_appointments)
 
+# Route for deleting address entries
+@app.route("/delete_address", methods=["POST"])
+@login_required
+def delete_address():
+    adres_id = request.form.get("adres_id")
+    # Delete all appointments linked to this address
+    db.execute("""DELETE FROM afspraken
+               WHERE adres_id = ?""",
+               adres_id)
+    
+    # Delete address
+    db.execute("""DELETE FROM adressenbestand
+               WHERE adres_id = ?""",
+               adres_id)
+    return Response(status=204)
 
+# Route for deleting board member
+@app.route("/delete_member", methods=["POST"])
+@login_required
+def delete_member():
+    try:
+        db.execute("""DELETE FROM bestuursleden
+                   WHERE bestuurslid_id = ?""",
+                   request.form.get("bestuurslid_id"))
+    except:
+        return render_template("apology.html", apology="Bestuurslid niet verwijdert"), 500
