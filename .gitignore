@@ -6,3 +6,4 @@ flask_session/
 *.db
 turfschuur.sqbpro
 facturen/
+newsk.py

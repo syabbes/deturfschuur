@@ -16,6 +16,18 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" defer></script>
         <script src="/static/script.js" defer></script>
 
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <script>
+                        var message = {{ message | tojson }};
+                        window.addEventListener("DOMContentLoaded", function() {
+                            alert(message);
+                        });
+                    </script>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     </head>
     <body>
         
@@ -27,7 +39,7 @@
                     <!--navitems-->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item"><a class="nav-link rem-title" href="/dashboard">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link rem-title" href="/factuur">Template factuur</a></li>
+                        <li class="nav-item"><a class="nav-link rem-title" href="/factuur">Facturering</a></li>
                         <li class="nav-item"><a class="nav-link rem-title" href="/adressenbestand">Adressenbestand</a></li>
                         <li class="nav-item"><a class="nav-link rem-title" href="/bestuursleden">Bestuursleden</a></li>
                     </ul>
@@ -37,7 +49,7 @@
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-img" href="#" onclick="logout()"><img src="/static/login.svg" alt="Login Icon" width="32" height="32"/></a></li>
+                        <li class="nav-item"><a class="nav-img" href="/logout"><img src="/static/login.svg" alt="Login Icon" width="32" height="32"/></a></li>
                     </ul>
                 </div>
                 <div class="ms-auto order-0 d-flex justify-content-center">

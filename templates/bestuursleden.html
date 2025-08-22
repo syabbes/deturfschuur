@@ -5,27 +5,27 @@
 {% endblock %}
 
 {% block main %}
-    <div class="div-toegang-vragen my-4">
-        {% if nnt[0]["naam"] %}
-            <h4 class="rem-title light text-left mx-3 mb-3">De volgende personen proberen lid te worden van de Turfschuur:</h4>
-        {% endif %}
-        {% for member in nnt %}
-            <div class="d-flex flex-row member flex-wrap mb-2">
-                <div class="d-flex flex-column mx-3">
-                    <p class="rem-title light mb-1 text-left">Naam:</p>
-                    <p class="crimson-pro-regular light mb-1 text-left">{{ member["naam"] }}</p>
-                </div>
-                <div class="d-flex flex-column mx-3">
-                    <p class="light rem-title mb-1 text-left">E-mailadres:</p>
-                    <p class="light crimson-pro-regular text-left mb-1">{{ member["email"] }}</p>
-                </div>
-                <div class="mx-3">
-                    <button id="goedgekeurd"><img src="/static/vinkje.svg" alt="goedgekeurd" width="28px" height="28px"></button>
-                    <button id="afgekeurd"><img src="/static/kruis.svg" alt="goedgekeurd" width="28px" height="28px"></button>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+    {% if nnt and nnt[0].naam %}
+        <div class="div-toegang-vragen my-4">
+                <h4 class="rem-title light text-left mx-3 mb-3">De volgende personen proberen lid te worden van de Turfschuur:</h4>
+                {% for member in nnt %}
+                    <div class="d-flex flex-row member flex-wrap mb-2">
+                        <div class="d-flex flex-column mx-3">
+                            <p class="rem-title light mb-1 text-left">Naam:</p>
+                            <p class="crimson-pro-regular light mb-1 text-left">{{ member["naam"] }}</p>
+                        </div>
+                        <div class="d-flex flex-column mx-3">
+                            <p class="light rem-title mb-1 text-left">E-mailadres:</p>
+                            <p class="light crimson-pro-regular text-left mb-1">{{ member["email"] }}</p>
+                        </div>
+                        <div class="mx-3">
+                            <button id="goedgekeurd" onclick="accept_member({{ member['bestuurslid_id'] }})"><img src="/static/vinkje.svg" alt="goedgekeurd" width="28px" height="28px"></button>
+                            <button id="afgekeurd" onclick="delete_member({{ member['bestuurslid_id'] }})"><img src="/static/kruis.svg" alt="goedgekeurd" width="28px" height="28px"></button>
+                        </div>
+                    </div>
+                {% endfor %}
+        </div>
+    {% endif %}
     <div class="adres_table">
         <table class="table adressenbestand">
             <thead>

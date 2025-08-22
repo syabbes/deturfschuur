@@ -1,9 +1,9 @@
 from cs50 import SQL
-from flask import Flask, redirect, render_template, request, session, jsonify, send_file, Response
+from flask import Flask, redirect, render_template, request, session, jsonify, send_file, Response, flash
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import timedelta, datetime, date
-from helpers import login_required, add_app
+from helpers import login_required, add_app, check_duplicate
 from email_validator import validate_email, EmailNotValidError
 import re
 from werkzeug.utils import secure_filename
@@ -69,6 +69,13 @@ def login():
         session["user_id"] = rows[0]["bestuurslid_id"]
         return redirect("/dashboard")
     
+# Logout
+@app.route("/logout", methods=["GET"])
+@login_required
+def logout():
+    session.clear()
+    return redirect("/")
+    
 # register for an account
 @app.route("/registreren", methods=["GET", "POST"])
 def register():
@@ -77,19 +84,19 @@ def register():
     else:
         # TODO
         if not request.form.get("name"):
-            return render_template("apology.html", apology="Geen naam ingevuld")
+            return render_template("apology.html", apology="Geen naam ingevuld"), 400
         if not request.form.get("email"):
-            return render_template("apology.html", apology="E-mailadres niet ingevuld")
+            return render_template("apology.html", apology="E-mailadres niet ingevuld"), 400
         # Check if the email is valid
         try:
             v = validate_email(request.form.get("email"))
             # use normalized form of emailadress
             email = v["email"]
         except EmailNotValidError as e:
-            return render_template("apology.html", apology="E-mailadres wordt niet herkend")
+            return render_template("apology.html", apology="E-mailadres wordt niet herkend"), 400
         # check if password and password-repeat are the same
         if not request.form.get("password") == request.form.get("password_repeat"):
-            return render_template("apology.html", apology="Wachtwoorden komen niet overeen")
+            return render_template("apology.html", apology="Wachtwoorden komen niet overeen"), 400
         
         # update database with new user
         # "toegelaten" must be set to zero (also happens automatically if no value is specified), as you dont want anyone being able to register
@@ -101,7 +108,7 @@ def register():
                 request.form.get("name"), request.form.get("email"), generate_password_hash(request.form.get("password")), 0
             )
         except:
-            return render_template("apology.html", apology="Naam of e-mailadres is al in gebruik")
+            return render_template("apology.html", apology="Naam of e-mailadres is al in gebruik"), 400
         # If user is registered, show a page with explaination that another member has to accept him/her
         return render_template("succes.html")
     
@@ -115,7 +122,6 @@ def dashboard():
     else:
         # Check if the form has an input field called flag
         flag = request.form.get("updatedelete-flag")
-        print(f"flag: {flag}")
         if flag is not None:
             # Handle the update/delete appointment form
             # Update alle = 0
@@ -139,11 +145,11 @@ def dashboard():
             if extra_omschrijving == "":
                 extra_omschrijving = None
             if not titel or not begin or not eind:
-                return render_template("apology.html", apology="Afspraak moet minstens een titel, begin- en eindtijd bevatten")
+                return render_template("apology.html", apology="Afspraak moet minstens een titel, begin- en eindtijd bevatten"), 400
             if eind <= begin:
-                return render_template("apology.html", apology="Eindtijd moet later dan begintijd zijn")
+                return render_template("apology.html", apology="Eindtijd moet later dan begintijd zijn"), 400
             if ((eind - begin) >= timedelta(days=1)):
-                return render_template("apology.html", apology="Afspraak duurt te lang")
+                return render_template("apology.html", apology="Afspraak duurt te lang"), 400
             
             # Switch case for the different cases like updating/deleting and all/single
             match int(flag):
@@ -163,7 +169,6 @@ def dashboard():
                                                   WHERE afspraak_id = ?""", 
                                                   id)
                     
-                    print(appointments)
                     # Calculate time difference
                     # Get correct appointment for comparing
                     right_app_time = db.execute("""SELECT begin, eind
@@ -201,26 +206,26 @@ def dashboard():
                                     WHERE afspraak_id = ?""", 
                                     id)
                     if n <= 0:
-                        return render_template("apology.html", apology="Gelieve niet aan de code lopen prutsen")
+                        return render_template("apology.html", apology="Gelieve niet aan de code lopen prutsen"), 400
                 case 3:
                     # Delete single
                     db.execute("""DELETE FROM afspraken
                                WHERE afspraak_id = ?""", 
                                id)
                 case _:
-                    return render_template("apology.html", apology="Gelieve niet aan de code lopen prutsen")
+                    return render_template("apology.html", apology="Gelieve niet aan de code lopen prutsen"), 400
 
             return redirect("/dashboard")
 
         if not request.form.get("titel") or not request.form.get("begin") or not request.form.get("einde"):
-            return render_template("apology.html", apology="Minstens een titel, begin- en eindtijd instellen")
+            return render_template("apology.html", apology="Minstens een titel, begin- en eindtijd instellen"), 400
         # check if end time is later than begin time
         begintijd = datetime.strptime(request.form.get("begin"), "%Y-%m-%dT%H:%M")
         eindtijd = datetime.strptime(request.form.get("einde"), "%Y-%m-%dT%H:%M")
         if eindtijd <= begintijd:
             return render_template("apology.html", apology="Eindtijd moet later dan begintijd zijn"), 400
         if ((eindtijd - begintijd) >= timedelta(days=1)):
-            return render_template("apology.html", apology="Afspraak duurt te lang")
+            return render_template("apology.html", apology="Afspraak duurt te lang"), 400
         
         titel = request.form.get("titel").strip()
         prijs = float(request.form.get("prijs"))
@@ -265,7 +270,7 @@ def dashboard():
         if (an or vl) and postcode and huisnummer:
             # Check if initial or surname is empty
             if not an or not vl:
-                return render_template("apology.html", apology="Moet zowel een voorletter als een achternaam zijn opgegeven om in het adressenbestand te zoeken")
+                return render_template("apology.html", apology="Moet zowel een voorletter als een achternaam zijn opgegeven om in het adressenbestand te zoeken"), 400
             # Querie database for right address id
             adres_id = db.execute("""SELECT adres_id
                                     FROM adressenbestand
@@ -279,25 +284,25 @@ def dashboard():
                                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", 
                                     vl, an, straat, huisnummer, plaats, land, postcode, request.form.get("contactgegevens"))
                 except ValueError:
-                    return render_template("apology.html", apology="Niet alle benodigde gegevens zijn ingevuld")
+                    return render_template("apology.html", apology="Niet alle benodigde gegevens zijn ingevuld"), 400
                 
                 try:
                     add_app(titel, begintijd, eindtijd, prijs, desc_prijs, extra, desc_extra, info, id, repeat, repeatx)
                 except ValueError:
-                    return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
+                    return render_template("apology.html", apology="Ongeldige herhaling ingesteld"), 400
             # Else if there's a name/address, add appointment with adres_id set to name/address
             else:
                 try:
                     add_app(titel, begintijd, eindtijd, prijs, desc_prijs, extra, desc_extra, info, adres_id[0]["adres_id"], repeat, repeatx)
                 except ValueError:
-                    return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
+                    return render_template("apology.html", apology="Ongeldige herhaling ingesteld"), 400
                 
         # Else if address isnt filled in, just add appointment to database with the adres_id set to null
         else:
             try:
                 add_app(titel, begintijd, eindtijd, prijs, desc_prijs, extra, desc_extra, info, None, repeat, repeatx)
             except ValueError:
-                    return render_template("apology.html", apology="Ongeldige herhaling ingesteld")
+                    return render_template("apology.html", apology="Ongeldige herhaling ingesteld"), 400
         return redirect("/dashboard")
     
 # Route for generating invoices
@@ -341,7 +346,6 @@ def factuur():
         customers = defaultdict(list)
         for app in appointments:
             customers[app['adres_id']].append(app)
-        print(dict(customers))
         # For each customer, open the doc and replace all keywords
         for adres_id, appt_list in customers.items():
             doc = Document("facturen/template.docx")
@@ -353,7 +357,10 @@ def factuur():
                 total += float(app["prijs"])
                 if app["extra"] is not None:
                     total += float(app["extra"])
+            # At end of loop round total to two decimals
+            total = "{:.2f}".format(float(total))
             today = date.today()
+            factuurnummer = int(str(adres_id) + today.strftime("%d%m%Y")) * 3
             adres = {
                 "{{Voorletters}}": appt_list[0]["voorletter"],
                 "{{Achternaam}}": appt_list[0]["achternaam"],
@@ -361,9 +368,9 @@ def factuur():
                 "{{Huisnummer}}": appt_list[0]["huisnummer"],
                 "{{Postcode}}": pc,
                 "{{Woonplaats}}": str(appt_list[0]["woonplaats"]).upper(),
-                "{{Totaal}}": str(total),
+                "{{Totaal}}": "€" + str(total),
                 "{{Factuurdatum}}": today.strftime("%d-%m-%Y"),
-                "{{Factuurnummer}}": str(adres_id) + today.strftime("%d%m%Y"),
+                "{{Factuurnummer}}": str(factuurnummer),
                 }
             
             for paragraph in list(doc.paragraphs):
@@ -380,10 +387,6 @@ def factuur():
             if table is None:
                 return render_template("apology.html", apology="geen tabel gevonden"), 400
             
-            print(len(doc.tables))
-            print(table)
-            print(len(table.rows))
-            print(len(table.columns))
             for app in appt_list:
                 row = table.add_row().cells
                 omsch_pr = app["omschrijving_prijs"]
@@ -396,7 +399,8 @@ def factuur():
                 if app["omschrijving_extra"] is not None and app["extra"] is not None:
                     row2 = table.add_row().cells
                     row2[0].text = app["omschrijving_extra"]
-                    row2[1].text = "€" + str(app["extra"])
+                    xpr = "{:.2f}".format(float(app["extra"]))
+                    row2[1].text = "€" + xpr
                     row2[2].text = "0,00%"
 
             savefilename = "facturen/generated/" + appt_list[0]["achternaam"] + str(adres_id) + "_" + today.strftime("%d%m%Y") + ".docx"
@@ -405,7 +409,6 @@ def factuur():
         with ZipFile("./facturen/facturen.zip", "w") as zip:
             for root, dir, files in os.walk("./facturen/generated"):
                 for file in files:
-                    print(os.path.join(root, file))
                     zip.write(os.path.join(root, file), arcname=file)
 
         return send_file("facturen/facturen.zip")
@@ -426,7 +429,7 @@ def bestuursleden():
                                FROM bestuursleden
                                WHERE toegelaten = 1""")
     
-    nnt = db.execute("""SELECT naam, email
+    nnt = db.execute("""SELECT bestuurslid_id, naam, email
                      FROM bestuursleden
                      WHERE toegelaten = 0""")
     return render_template("bestuursleden.html", bestuursleden=bestuursleden, nnt=nnt)
@@ -440,7 +443,6 @@ def get_appointments_month():
     year = request.args.get("year")
     mstring = str(month).zfill(2)
     myear = str(year)
-    print("month arg:", month, "year arg:", year)
     months = db.execute("""SELECT afspraak_id, begin, eind FROM afspraken
                         WHERE strftime('%m', begin) = ? AND strftime('%Y', begin) = ?
                         ORDER BY begin ASC""",
@@ -463,14 +465,12 @@ def get_appointments_day():
     # Convert both back to iso 8601 format
     day.replace(microsecond=0).isoformat()
     endday.replace(microsecond=0).isoformat()
-    print(f"day: {day} endday: {endday}")
     # Query database for every appointment where the starttime <= endday and endtime >= day
     day_appointments = db.execute("""SELECT afspraken.*, adressenbestand.adres_id, adressenbestand.voorletter, adressenbestand.achternaam
                                   FROM afspraken
                                   LEFT JOIN adressenbestand ON afspraken.adres_id = adressenbestand.adres_id
                                   WHERE begin <= ? AND eind >= ?""",
                                   endday, day)
-    print(day_appointments)
     
     return jsonify(day_appointments)
 
@@ -494,9 +494,27 @@ def delete_address():
 @app.route("/delete_member", methods=["POST"])
 @login_required
 def delete_member():
-    try:
-        db.execute("""DELETE FROM bestuursleden
-                   WHERE bestuurslid_id = ?""",
-                   request.form.get("bestuurslid_id"))
-    except:
-        return render_template("apology.html", apology="Bestuurslid niet verwijdert"), 500
+    db.execute("""DELETE FROM bestuursleden
+                WHERE bestuurslid_id = ?""",
+                request.form.get("bestuurslid_id"))
+    return Response(status=200)
+    
+@app.route("/accept_member", methods=["POST"])
+@login_required
+def accept_member():
+    db.execute("""UPDATE bestuursleden
+               SET toegelaten = 1
+               WHERE bestuurslid_id = ?""",
+               request.form.get("bestuurslid_id"))
+    return Response(status=200)
+
+# Route for checking for duplicate appointments
+@app.route("/check_duplicate", methods=["GET"])
+@login_required
+def check_duplicate_apps():
+    b = datetime.strptime(request.args.get("begin"), "%Y-%m-%dT%H:%M")
+    e = datetime.strptime(request.args.get("eind"), "%Y-%m-%dT%H:%M")
+    print(f"checking: {b} and {e}")
+
+    # Call function for checking duplicate
+    return jsonify(check_duplicate(b, e))

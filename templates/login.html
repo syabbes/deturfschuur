@@ -8,10 +8,10 @@
     <div class="container-fluid justify-content-evenly pt-5 pb-5 form">
         <form action="/login" method="post">
             <div class="mb-3">
-                <input autocomplete="on" autofocus class="form-control mx-auto w-auto crimson-pro-regular" name="name" placeholder="Naam" type="text">
+                <input autocomplete="on" autofocus class="form-control mx-auto w-auto crimson-pro-regular" name="name" placeholder="Naam" type="text" autocomplete="username" required>
             </div>
             <div class="mb-3">
-                <input class="form-control mx-auto w-auto crimson-pro-regular" name="password" placeholder="Wachtwoord" type="password">
+                <input class="form-control mx-auto w-auto crimson-pro-regular" name="password" placeholder="Wachtwoord" type="password" autocomplete="current-password" required>
             </div>
             <button class="btn button crimson-pro-regular" type="submit">Inloggen</button>
         </form>

@@ -11,18 +11,18 @@
             <div class="d-flex justify-content-end">
                 <button class="btn close-button" id="close-app-modal">&times;</button>
             </div>
-            <form id="info-form" method="post">
+            <form id="info-form" method="post" onsubmit="return submitform('a');">
                 <p class="rem-title mb-1 light label">Titel</p>
                 <input class="crimson-pro-regular" type="text" name="app-titel">
                 <p class="crimson-pro-regular light mt-3" id="app-person"></p>
                 <div class="d-flex gap-3 flex-wrap justify-content-evenly">
                     <div class="d-flex flex-column align-items-center">
                         <p class="rem-title mb-1 light label">Begin</p>
-                        <input class="crimson-pro-regular" type="datetime-local" name="app-begin">
+                        <input class="crimson-pro-regular" type="datetime-local" name="app-begin" id="app-begin">
                     </div>
                     <div class="d-flex flex-column align-items-center">
                         <p class="rem-title mb-1 light label">Eind</p>
-                        <input class="crimson-pro-regular" type="datetime-local" name="app-eind">
+                        <input class="crimson-pro-regular" type="datetime-local" name="app-eind" id="app-eind">
                     </div>
                 </div>
                 <div class="d-flex flex-wrap gap-3 justify-content-evenly">
@@ -69,7 +69,7 @@
                 <h2 class="rem-title light mb-4 mt-4">Nieuwe afspraak</h2>
             </header>
             <div class="form justify-content-evenly">
-                <form class="d-flex flex-column align-items-center gap-4" method="post">
+                <form class="d-flex flex-column align-items-center gap-4" method="post" onsubmit="return submitform('b');">
                     <!--row 1-->
                     <div class="d-flex gap-3 flex-wrap justify-content-evenly w-75">
                         <div class="d-flex flex-column align-items-center">

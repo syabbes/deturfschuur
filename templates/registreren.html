@@ -8,16 +8,16 @@
     <div class="container-fluid justify-content-evenly pt-5 pb-5 form">
         <form action="/registreren" method="post">
             <div class="mb-3">
-                <input autocomplete="on" autofocus class="form-control mx-auto w-auto crimson-pro-regular" name="name" placeholder="Gebruikersnaam" type="text">
+                <input autocomplete="on" autofocus class="form-control mx-auto w-auto crimson-pro-regular" name="name" placeholder="Gebruikersnaam" type="text" autocomplete="username">
             </div>
             <div class="mb-3">
-                <input autocomplete="on" class="form-control mx-auto w-auto crimson-pro-regular" name="email" placeholder="E-mail" type="email">
+                <input autocomplete="on" class="form-control mx-auto w-auto crimson-pro-regular" name="email" placeholder="E-mail" type="email" autocomplete="email">
             </div>
             <div class="mb-3">
-                <input class="form-control mx-auto w-auto crimson-pro-regular" name="password" placeholder="Wachtwoord" type="password">
+                <input class="form-control mx-auto w-auto crimson-pro-regular" name="password" placeholder="Wachtwoord" type="password" autocomplete="new-password">
             </div>
             <div class="mb-3">
-                <input class="form-control mx-auto w-auto crimson-pro-regular" name="password_repeat" placeholder="Herhaal wachtwoord" type="password">
+                <input class="form-control mx-auto w-auto crimson-pro-regular" name="password_repeat" placeholder="Herhaal wachtwoord" type="password" autocomplete="new-password">
             </div>
             <button class="btn button crimson-pro-regular" type="submit">Aanmelden</button>
         </form>

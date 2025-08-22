@@ -1,9 +1,3 @@
-function logout()
-{
-    // do nothing yet
-    alert("Doet nog niks");
-}
-
 function generate_calendar(year, month)
 {
     // array of months
@@ -110,25 +104,34 @@ function previous_month()
 document.addEventListener("DOMContentLoaded", load_calendar);
 
 // eventlistener for the calendar
-var modal = document.getElementById("modal");
-var calendar = document.getElementById("calendar-body");
-calendar.addEventListener("click", function(event){
-    modal.style.display = "block";
-    clicked_day = event.target;
-    setbegintime();
-    setendtime();
-    // Remove all appointments
-    let apps = document.getElementById("appointments")
-    while (apps.hasChildNodes())
+document.addEventListener("DOMContentLoaded", function() {
+    var modal = document.getElementById("modal");
+    var calendar = document.getElementById("calendar-body");
+    if (calendar != null)
     {
-        apps.removeChild(apps.children[0]);
+        calendar.addEventListener("click", function(event){
+            modal.style.display = "block";
+            clicked_day = event.target;
+            setbegintime();
+            setendtime();
+            // Remove all appointments
+            let apps = document.getElementById("appointments")
+            while (apps.hasChildNodes())
+            {
+                apps.removeChild(apps.children[0]);
+            }
+            get_appointments_day(clicked_day.dataset.date);
+        })
     }
-    get_appointments_day(clicked_day.dataset.date);
-})
 
-// eventlistener for close button of modal
-document.getElementById("close-modal").addEventListener("click", function(){
-    modal.style.display = "none";
+    // eventlistener for close button of modal
+    let close_modal = document.getElementById("close-modal")
+    if (close_modal != null)
+    {
+        close_modal.addEventListener("click", function(){
+            modal.style.display = "none";
+        });
+    }
 });
 
 // functions for setting a default time for the appointment
@@ -271,81 +274,78 @@ var div_popup = document.getElementById("update-appointment-popup")
 let app_modal = document.getElementById("app-modal");
 var is_delete;
 var flag;
-list_apps.addEventListener("click", function(event){
-    let app_div = event.target.closest(".app_div");
-    // Check if there is indeed an appointment
-    if (!app_div)
-    {
-        return;
-    }
-    // Load the modal for the appointment
-    load_app_info(app_div.getAttribute("data-id"));
-});
-
-// Eventlistener for all of the buttons of appointment modal
-app_modal.addEventListener("click", function(event){
-    let info_form = document.getElementById("info-form");
-    inputs_info_form = info_form.elements;
-    // Check if popup message is visible
-    if (div_popup.classList.contains("show"))
-    {
-        div_popup.classList.remove("show");
-    }
-    // Else check which button is pressed
-    else if (event.target.id == "close-app-modal")
-    {
-        app_modal.style.display = "none";
-    }
-    else if (event.target.id == "btn-update")
-    {
-        is_delete = false;
-        div_popup.classList.add("show");
-        console.log(is_delete);
-    }
-    else if (event.target.id == "btn-delete")
-    {
-        is_delete = true;
-        div_popup.classList.add("show");
-        console.log(is_delete);
-    }
-
-    if (event.target.id == "btn-all")
-    {
-        // Check status of is_delete
-        if (is_delete === true)
+if (list_apps != null && app_modal != null)
+{
+    list_apps.addEventListener("click", function(event){
+        let app_div = event.target.closest(".app_div");
+        // Check if there is indeed an appointment
+        if (!app_div)
         {
-            flag = 2;
+            return;
         }
-        else
+        // Load the modal for the appointment
+        load_app_info(app_div.getAttribute("data-id"));
+    });
+    
+    // Eventlistener for all of the buttons of appointment modal
+    app_modal.addEventListener("click", function(event){
+        let info_form = document.getElementById("info-form");
+        inputs_info_form = info_form.elements;
+        // Check if popup message is visible
+        if (div_popup.classList.contains("show"))
         {
-            flag = 0;
+            div_popup.classList.remove("show");
         }
-        // Update invisible input field
-        inputs_info_form["updatedelete-flag"].value = flag;
-        console.log(flag);
-        info_form.submit();
-    }
-    else if (event.target.id == "btn-single")
-    {
-        if (is_delete === true)
+        // Else check which button is pressed
+        else if (event.target.id == "close-app-modal")
         {
-            flag = 3;
+            app_modal.style.display = "none";
         }
-        else
+        else if (event.target.id == "btn-update")
         {
-            flag = 1;
+            is_delete = false;
+            div_popup.classList.add("show");
         }
-        // Update invisible input field
-        inputs_info_form["updatedelete-flag"].value = flag;
-        console.log(flag);
-        info_form.submit();
-    }
-});
+        else if (event.target.id == "btn-delete")
+        {
+            is_delete = true;
+            div_popup.classList.add("show");
+        }
+    
+        if (event.target.id == "btn-all")
+        {
+            // Check status of is_delete
+            if (is_delete === true)
+            {
+                flag = 2;
+            }
+            else
+            {
+                flag = 0;
+            }
+            // Update invisible input field
+            inputs_info_form["updatedelete-flag"].value = flag;
+            info_form.submit();
+        }
+        else if (event.target.id == "btn-single")
+        {
+            if (is_delete === true)
+            {
+                flag = 3;
+            }
+            else
+            {
+                flag = 1;
+            }
+            // Update invisible input field
+            inputs_info_form["updatedelete-flag"].value = flag;
+            info_form.submit();
+        }
+    });
+}
 
 function load_app_info(app_id)
 {
-    console.log(app_id);
-    console.log(list_of_appointments);
     // Get the form with its elements
     var form = document.getElementById("info-form");
     form_inputs = form.elements;
@@ -400,5 +400,80 @@ function delete_adres(adres_id)
         $.post("/delete_address", {"adres_id": adres_id}, function(){
             location.reload();
         })
+    }
+}
+
+// Delete member
+function delete_member(bestuurslid_id)
+{
+    confirm_delete = confirm("Let op, hiermee verwijdert u dit bestuurslid en zal hierna niet kunnen inloggen");
+    if (confirm_delete == true)
+    {
+        $.post("/delete_member", {"bestuurslid_id": bestuurslid_id}, function(){
+            location.reload();
+        })
+    }
+}
+
+// Accept new board member
+function accept_member(bestuurslid_id)
+{
+    confirm_accept = confirm("Let op, u geeft deze persoon toegang tot alle gegevens van de Turfschuur");
+    if (confirm_accept == true)
+    {
+        $.post("/accept_member", {"bestuurslid_id": bestuurslid_id}, function(){
+            location.reload();
+        })
+    }
+}
+
+// Function for checking for duplicate appointments
+var validation = false
+var checks = 0
+
+var begin_input = document.getElementById("begin");
+var einde_input = document.getElementById("einde");
+
+var app_begin_input = document.getElementById("app-begin");
+var app_eind_input = document.getElementById("app-eind");
+
+begin_input.addEventListener("blur", () => check_duplicate(begin_input, einde_input));
+einde_input.addEventListener("blur", () => check_duplicate(begin_input, einde_input));
+
+app_begin_input.addEventListener("blur", () => check_duplicate(app_begin_input, app_eind_input));
+app_eind_input.addEventListener("blur", () => check_duplicate(app_begin_input, app_eind_input));
+
+function check_duplicate(begin, eind)
+{
+    if (validation == false)
+    {
+        b = new Date(begin.value)
+        e = new Date(eind.value)
+
+        if (e > b)
+        {
+            validation = true;
+            $.get("/check_duplicate", { begin: begin.value, eind: eind.value}, function(data) {
+                if (data !== false)
+                {
+                    alert(data);
+                }
+                validation = false;
+            });
+        }
+    }
+}
+
+// Submit form function
+function submitform(f)
+{
+    // Check if validation is ongoing
+    if (validation == true)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
     }
 }
