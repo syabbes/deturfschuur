@@ -6,8 +6,9 @@
 
 {% block main %}
     <!-- Popup window for appointments -->
+    <!-- Modals Based on following tutorial from W3schools: https://www.w3schools.com/howto/howto_css_modals.asp -->
     <div class="app-modal" id="app-modal">
-        <div class="app-info-form" method="post">
+        <div class="app-info-form">
             <div class="d-flex justify-content-end">
                 <button class="btn close-button" id="close-app-modal">&times;</button>
             </div>
@@ -78,11 +79,11 @@
                         </div>
                         <div class="d-flex flex-column align-items-center">
                             <p class="rem-title light mb-1">Begin</p>
-                            <input placeholder="Beginijd" type="datetime-local" name="begin" id="begin" required>
+                            <input type="datetime-local" name="begin" id="begin" required>
                         </div>
                         <div class="d-flex flex-column align-items-center">
                             <p class="rem-title light mb-1">Einde</p>
-                            <input placeholder="Eindtijd" type="datetime-local" name="einde" id="einde" required>
+                            <input type="datetime-local" name="einde" id="einde" required>
                         </div>
                     </div>
                     <!--row 2-->
@@ -99,9 +100,9 @@
                         <div>
                             <p class="rem-title light mb-1">Herhaling</p>
                             <label for="herhaling" class="light crimson-pro-regular">Wordt herhaald om zoveel weken: </label>
-                            <input value="1" name="interval" min="1" max="52" type="number">
+                            <input value="1" name="interval" min="1" max="52" type="number" id="herhaling">
                             <label for="eind_herhaling" class="light crimson-pro-regular">Wordt zoveel keer herhaald: </label>
-                            <input value="0" name="reeks" min="0" max="52" type="number">
+                            <input value="0" name="reeks" min="0" max="52" type="number" id="eind_herhaling">
                         </div>
                     </div>
                     <hr class="calendar-division my-1">

@@ -471,3 +471,20 @@ input:focus
     color: #ece8ef !important;
     margin-left: 1rem;
 }
+
+/* Styling homepage */
+.turfschuur-text
+{
+    width: 50%;
+    font-size: larger;
+}
+#contact p
+{
+    font-size: large;
+}
+@media screen and (max-width: 767px) {
+    .turfschuur-text
+    {
+        width: 90%;
+    }
+}

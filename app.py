@@ -12,6 +12,7 @@ from collections import defaultdict
 import os
 from zipfile import ZipFile
 
+# Configuration part copied from CS50 Finance pset
 # Configure application
 app = Flask(__name__)
 
@@ -38,7 +39,6 @@ db.execute("PRAGMA foreign_keys = ON")
 # home
 @app.route("/")
 def index():
-    # TODO
     return render_template("index.html")
 
 # login
@@ -50,7 +50,6 @@ def login():
             return redirect("/dashboard")
         return render_template("login.html")
     else:
-        # TODO
         if not request.form.get("name"):
             return render_template("apology.html", apology="Naam is niet ingevuld"), 400
         if not request.form.get("password"):
@@ -360,7 +359,11 @@ def factuur():
             # At end of loop round total to two decimals
             total = "{:.2f}".format(float(total))
             today = date.today()
-            factuurnummer = int(str(adres_id) + today.strftime("%d%m%Y")) * 3
+            maxf = db.execute("""SELECT max(factuurnummer) AS max FROM facturen""")
+            if len(maxf) <= 0 or maxf[0]["max"] is None:
+                factuurnummer = 50241
+            else:
+                factuurnummer = int(maxf[0]["max"])
             adres = {
                 "{{Voorletters}}": appt_list[0]["voorletter"],
                 "{{Achternaam}}": appt_list[0]["achternaam"],
@@ -405,6 +408,14 @@ def factuur():
 
             savefilename = "facturen/generated/" + appt_list[0]["achternaam"] + str(adres_id) + "_" + today.strftime("%d%m%Y") + ".docx"
             doc.save(savefilename)
+
+            # Update database
+            try:
+                db.execute("""INSERT INTO facturen (factuurnummer, adres_id)
+                           VALUES (?, ?)""", 
+                           factuurnummer, adres_id)
+            except:
+                return render_template("apology.html", apology="Fout met genereren van facturen, probeer het later opnieuw"), 500
         # Zip all the generated invoices and send it back to the user
         with ZipFile("./facturen/facturen.zip", "w") as zip:
             for root, dir, files in os.walk("./facturen/generated"):

@@ -3,6 +3,7 @@ from functools import wraps
 from datetime import datetime, timedelta, date
 import uuid
 
+# Login_required() function copied from CS50 Finance pset
 def login_required(f):
     """
     Decorate routes to require login.

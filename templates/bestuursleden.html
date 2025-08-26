@@ -19,8 +19,8 @@
                             <p class="light crimson-pro-regular text-left mb-1">{{ member["email"] }}</p>
                         </div>
                         <div class="mx-3">
-                            <button id="goedgekeurd" onclick="accept_member({{ member['bestuurslid_id'] }})"><img src="/static/vinkje.svg" alt="goedgekeurd" width="28px" height="28px"></button>
-                            <button id="afgekeurd" onclick="delete_member({{ member['bestuurslid_id'] }})"><img src="/static/kruis.svg" alt="goedgekeurd" width="28px" height="28px"></button>
+                            <button id="goedgekeurd" onclick="accept_member({{ member['bestuurslid_id'] }})"><img src="/static/vinkje.svg" alt="goedgekeurd" width="28" height="28"></button>
+                            <button id="afgekeurd" onclick="delete_member({{ member['bestuurslid_id'] }})"><img src="/static/kruis.svg" alt="goedgekeurd" width="28" height="28"></button>
                         </div>
                     </div>
                 {% endfor %}
@@ -41,7 +41,7 @@
                         <td>{{ bestuurslid["bestuurslid_id"] }}</td>
                         <td>{{ bestuurslid["naam"] }}</td>
                         <td>{{ bestuurslid["email"] }}</td>
-                        <td><button onclick="delete_member({{ bestuurslid['bestuurslid_id'] }})"><img src="/static/delete.svg" alt="Delete button" width="28px" height="28px"></button></td>
+                        <td><button onclick="delete_member({{ bestuurslid['bestuurslid_id'] }})"><img src="/static/delete.svg" alt="Delete button" width="28" height="28"></button></td>
                     </tr>
                 {% endfor %}
             </tbody>
