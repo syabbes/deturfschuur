@@ -126,7 +126,7 @@ SET toegelaten = 1
 WHERE email = [your email] AND naam = [your name];
 ```
 
-Make sure to replace `[your email]` with the emailadres you have used when signing up and replace `your name` with the username you typed in.
+Make sure to replace `[your email]` with the email you have used when signing up and replace `your name` with the username you typed in.
 
 ## Future improvements
 As much as I wished that my prototype is perfect, it unfortunately isn't :). Here are some ways i might expand and improve the website.
