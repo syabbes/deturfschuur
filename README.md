@@ -162,8 +162,9 @@ I also used AI which i found really helpful for debugging and other purposes. Ho
 
 ### Design Resources
 - [Google Fonts](https://fonts.google.com/)
-- [Garfield Image (pngimg.com)](https://pngimg.com/image/109393)  
-- Remaining graphic design elements created by myself
+- [Garfield Image (pngimg.com)](https://pngimg.com/image/109393) 
+ 
+The remaining design is made by myself.
 
 
 ## Translations
