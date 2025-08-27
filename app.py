@@ -363,7 +363,7 @@ def factuur():
             if len(maxf) <= 0 or maxf[0]["max"] is None:
                 factuurnummer = 50241
             else:
-                factuurnummer = int(maxf[0]["max"])
+                factuurnummer = int(maxf[0]["max"]) + 1
             adres = {
                 "{{Voorletters}}": appt_list[0]["voorletter"],
                 "{{Achternaam}}": appt_list[0]["achternaam"],
