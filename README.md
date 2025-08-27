@@ -104,6 +104,10 @@ Install dependencies.
 pip install -r requirements.txt
 ```
 
+The project relies on a database which need to be created.
+```bash
+sqlite3 turfschuur.db < setup.txt```
+
 Run the website.
 ```bash
 flask run
