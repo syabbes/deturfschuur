@@ -1,5 +1,5 @@
 # Web application for 'De Turfschuur'
-#### Video Demo:  <URL HERE>
+#### Video Demo:  <https://youtu.be/eoIDssTEePI>
 ## Description:
 My name is Simon, I'm from the Netherlands and this is a web application I made as a solution for the final project of the CS50 course. The assignment was that "you build something of interest to you, that you solve an actual problem, that you impact your community, or that you change the world".
 I decided to help out my community. In my neighbourhoud is a building which is being used for room rental and i noticed that it took quite some time for them to make all the invoices. First i wanted to solve just that problem, but ended up making a whole calendar and address database too.
@@ -163,7 +163,7 @@ I also used AI which i found really helpful for debugging and other purposes. Ho
 ### Design Resources
 - [Google Fonts](https://fonts.google.com/)
 - [Garfield Image (pngimg.com)](https://pngimg.com/image/109393) 
- 
+
 The remaining design is made by myself.
 
 
